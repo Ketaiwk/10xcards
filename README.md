@@ -135,7 +135,6 @@ The project is currently in MVP (Minimum Viable Product) phase. The core feature
 ### Success Metrics
 
 - 75% of AI-generated flashcards are accepted by users
-- 75% of flashcards are created using AI
 
 ## License
 
