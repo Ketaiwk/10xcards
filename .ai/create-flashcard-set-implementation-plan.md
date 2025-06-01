@@ -18,8 +18,8 @@ Endpoint służy do tworzenia nowych zestawów fiszek z opcjonalnym generowaniem
   {
     name: string;           // wymagane, max 255 znaków
     description?: string;   // opcjonalne
-    sourceText?: string;    // opcjonalne, min 1000, max 10000 znaków
-    generateAiCards: boolean; // opcjonalne, domyślnie false
+    source_text?: string;    // opcjonalne, min 1000, max 10000 znaków
+    generate_ai_cards: boolean; // opcjonalne, domyślnie false
   }
   ```
 - Nagłówki:
@@ -34,7 +34,7 @@ interface CreateFlashcardSetCommand {
   name: string;
   description?: string;
   source_text?: string;
-  generateAiCards?: boolean;
+  generate_ai_cards?: boolean;
 }
 
 // Odpowiedź z utworzonym zestawem

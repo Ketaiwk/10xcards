@@ -29,7 +29,7 @@ export interface CreateFlashcardSetCommand {
   name: string;
   description?: string;
   source_text?: string;
-  generateAiCards?: boolean;
+  generate_ai_cards?: boolean;
 }
 
 /** Response type for a single flashcard set */

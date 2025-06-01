@@ -33,8 +33,8 @@
   {
     "name": "string (required, max 255 chars)",
     "description": "string (optional)",
-    "sourceText": "string (optional, min 1000 chars, max 10000 chars)",
-    "generateAiCards": "boolean (default: false)"
+    "source_text": "string (optional, min 1000 chars, max 10000 chars)",
+    "generate_ai_cards": "boolean (default: false)"
   }
   ```
 - **Response**: 201 Created
