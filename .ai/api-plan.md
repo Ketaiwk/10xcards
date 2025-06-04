@@ -43,14 +43,14 @@
     "id": "uuid",
     "name": "string",
     "description": "string",
-    "sourceText": "string",
-    "createdAt": "timestamp",
-    "updatedAt": "timestamp",
-    "aiGeneratedCount": "number",
-    "aiAcceptedCount": "number",
-    "aiEditedCount": "number",
-    "manualCount": "number",
-    "generationDuration": "number"
+    "source_text": "string",
+    "created_at": "timestamp",
+    "updated_at": "timestamp",
+    "ai_generated_count": "number",
+    "ai_accepted_count": "number",
+    "ai_edited_count": "number",
+    "manual_count": "number",
+    "generation_duration": "number"
   }
   ```
 - **Errors**:
@@ -65,8 +65,8 @@
 - **Query Parameters**:
   - page: number (default: 1)
   - limit: number (default: 10, max: 50)
-  - sortBy: string (created_at, updated_at, name)
-  - sortOrder: string (asc, desc)
+  - sort_by: string (created_at, updated_at, name)
+  - sort_order: string (asc, desc)
 - **Response**: 200 OK
   ```json
   {
@@ -75,12 +75,12 @@
         "id": "uuid",
         "name": "string",
         "description": "string",
-        "createdAt": "timestamp",
-        "updatedAt": "timestamp",
-        "aiGeneratedCount": "number",
-        "aiAcceptedCount": "number",
-        "aiEditedCount": "number",
-        "manualCount": "number"
+        "created_at": "timestamp",
+        "updated_at": "timestamp",
+        "ai_generated_count": "number",
+        "ai_accepted_count": "number",
+        "ai_edited_count": "number",
+        "manual_count": "number"
       }
     ],
     "total": "number",
@@ -92,7 +92,7 @@
 #### 2.1.3. Get Flashcard Set
 
 - **Method**: GET
-- **Path**: `/api/flashcard-sets/{id}`
+- **Path**: `/api/flashcard-sets/{setId}`
 - **Description**: Retrieves a specific flashcard set with its metadata
 - **Response**: 200 OK
   ```json
@@ -100,14 +100,14 @@
     "id": "uuid",
     "name": "string",
     "description": "string",
-    "sourceText": "string",
-    "createdAt": "timestamp",
-    "updatedAt": "timestamp",
-    "aiGeneratedCount": "number",
-    "aiAcceptedCount": "number",
-    "aiEditedCount": "number",
-    "manualCount": "number",
-    "generationDuration": "number"
+    "source_text": "string",
+    "created_at": "timestamp",
+    "updated_at": "timestamp",
+    "ai_generated_count": "number",
+    "ai_accepted_count": "number",
+    "ai_edited_count": "number",
+    "manual_count": "number",
+    "generation_duration": "number"
   }
   ```
 - **Errors**:
@@ -116,14 +116,14 @@
 #### 2.1.4. Update Flashcard Set
 
 - **Method**: PATCH
-- **Path**: `/api/flashcard-sets/{id}`
+- **Path**: `/api/flashcard-sets/{setId}`
 - **Description**: Updates flashcard set metadata
 - **Request Body**:
   ```json
   {
     "name": "string (optional)",
     "description": "string (optional)",
-    "isDeleted": "boolean (optional)"
+    "is_deleted": "boolean (optional)"
   }
   ```
 - **Response**: 200 OK
@@ -132,7 +132,7 @@
     "id": "uuid",
     "name": "string",
     "description": "string",
-    "updatedAt": "timestamp"
+    "updated_at": "timestamp"
   }
   ```
 - **Errors**:
@@ -151,13 +151,13 @@
   {
     "question": "string (required, max 200 chars)",
     "answer": "string (required, max 500 chars)",
-    "creationType": "enum (manual)"
+    "creation_type": "enum (ai_generated, ai_edited, manual)"
   }
   ```
 - **Response**: 201 Created
   ```json
   {
-    "id": "uuid",
+    "flashcardId": "uuid",
     "setId": "uuid",
     "question": "string",
     "answer": "string",
@@ -178,18 +178,18 @@
 - **Query Parameters**:
   - page: number (default: 1)
   - limit: number (default: 30)
-  - creationType: string (ai_generated, ai_edited, manual)
+  - creation_type: string (ai_generated, ai_edited, manual)
 - **Response**: 200 OK
   ```json
   {
     "items": [
       {
         "id": "uuid",
-        "setId": "uuid",
+        "set_id": "uuid",
         "question": "string",
         "answer": "string",
-        "creationType": "string",
-        "createdAt": "timestamp"
+        "creation_type": "string",
+        "created_at": "timestamp"
       }
     ],
     "total": "number",
@@ -203,20 +203,20 @@
 #### 2.2.3. Update Flashcard
 
 - **Method**: PATCH
-- **Path**: `/api/flashcard-sets/{setId}/flashcards/{id}`
+- **Path**: `/api/flashcard-sets/{setId}/flashcards/{flashcardId}`
 - **Description**: Updates a flashcard's content
 - **Request Body**:
   ```json
   {
     "question": "string (optional)",
     "answer": "string (optional)",
-    "isDeleted": "boolean (optional)"
+    "is_deleted": "boolean (optional)"
   }
   ```
 - **Response**: 200 OK
   ```json
   {
-    "id": "uuid",
+    "flashcardId": "uuid",
     "setId": "uuid",
     "question": "string",
     "answer": "string",
@@ -250,7 +250,7 @@
 
   - Name: Required, max 255 characters
   - Description: Optional
-  - Source Text: Optional min 100 chars, max 10000 chars
+  - Source Text: Optional min 1000 chars, max 10000 chars
   - Maximum 30 flashcards per set
 
 - Flashcard:
