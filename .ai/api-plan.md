@@ -92,7 +92,7 @@
 #### 2.1.3. Get Flashcard Set
 
 - **Method**: GET
-- **Path**: `/api/flashcard-sets/{setId}`
+- **Path**: `/api/flashcard-sets/{set_id}`
 - **Description**: Retrieves a specific flashcard set with its metadata
 - **Response**: 200 OK
   ```json
@@ -116,7 +116,7 @@
 #### 2.1.4. Update Flashcard Set
 
 - **Method**: PATCH
-- **Path**: `/api/flashcard-sets/{setId}`
+- **Path**: `/api/flashcard-sets/{set_id}`
 - **Description**: Updates flashcard set metadata
 - **Request Body**:
   ```json
@@ -144,7 +144,7 @@
 #### 2.2.1. Create Flashcard
 
 - **Method**: POST
-- **Path**: `/api/flashcard-sets/{setId}/flashcards`
+- **Path**: `/api/flashcard-sets/{set_id}/flashcards`
 - **Description**: Creates a new flashcard in a set
 - **Request Body**:
   ```json
@@ -157,12 +157,12 @@
 - **Response**: 201 Created
   ```json
   {
-    "flashcardId": "uuid",
-    "setId": "uuid",
+    "id": "uuid",
+    "set_id": "uuid",
     "question": "string",
     "answer": "string",
-    "creationType": "string",
-    "createdAt": "timestamp"
+    "creation_type": "string",
+    "created_at": "timestamp"
   }
   ```
 - **Errors**:
@@ -173,7 +173,7 @@
 #### 2.2.2. List Set Flashcards
 
 - **Method**: GET
-- **Path**: `/api/flashcard-sets/{setId}/flashcards`
+- **Path**: `/api/flashcard-sets/{set_id}/flashcards`
 - **Description**: Retrieves flashcards from a set
 - **Query Parameters**:
   - page: number (default: 1)
@@ -203,7 +203,7 @@
 #### 2.2.3. Update Flashcard
 
 - **Method**: PATCH
-- **Path**: `/api/flashcard-sets/{setId}/flashcards/{flashcardId}`
+- **Path**: `/api/flashcard-sets/{set_id}/flashcards/{id}`
 - **Description**: Updates a flashcard's content
 - **Request Body**:
   ```json
@@ -216,12 +216,12 @@
 - **Response**: 200 OK
   ```json
   {
-    "flashcardId": "uuid",
-    "setId": "uuid",
+    "id": "uuid",
+    "set_id": "uuid",
     "question": "string",
     "answer": "string",
-    "creationType": "string",
-    "createdAt": "timestamp"
+    "creation_type": "string",
+    "created_at": "timestamp"
   }
   ```
 - **Errors**:
