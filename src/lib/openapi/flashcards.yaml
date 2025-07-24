@@ -1,0 +1,346 @@
+openapi: 3.0.3
+info:
+  title: 10xCards API - Flashcards
+  description: API do zarządzania fiszkami w ramach zestawów w aplikacji 10xCards
+  version: 1.0.0
+
+paths:
+  /api/flashcard-sets/{set_id}/flashcards:
+    parameters:
+      - name: set_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Identyfikator zestawu fiszek
+
+    post:
+      summary: Utwórz nową fiszkę w zestawie
+      description: Tworzy nową fiszkę w określonym zestawie. Maksymalnie 30 fiszek na zestaw.
+      tags:
+        - Flashcards
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - question
+                - answer
+                - creation_type
+              properties:
+                question:
+                  type: string
+                  maxLength: 200
+                  minLength: 1
+                  example: "Co to jest TypeScript?"
+                  description: "Pytanie na fiszce"
+                answer:
+                  type: string
+                  maxLength: 500
+                  minLength: 1
+                  example: "TypeScript to typowany nadzbiór JavaScript który kompiluje się do czystego JavaScript."
+                  description: "Odpowiedź na fiszce"
+                creation_type:
+                  type: string
+                  enum: [ai_generated, ai_edited, manual]
+                  example: "manual"
+                  description: "Sposób utworzenia fiszki"
+      responses:
+        "201":
+          description: Fiszka została utworzona pomyślnie
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlashcardResponse"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/FlashcardSetNotFound"
+        "409":
+          $ref: "#/components/responses/FlashcardLimitExceeded"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+    get:
+      summary: Lista fiszek w zestawie
+      description: Pobiera listę fiszek z określonego zestawu z paginacją i filtrowaniem
+      tags:
+        - Flashcards
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+          description: "Numer strony (zaczyna się od 1)"
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 30
+            minimum: 1
+            maximum: 100
+          description: "Liczba elementów na stronę (maksymalnie 100)"
+        - name: creation_type
+          in: query
+          schema:
+            type: string
+            enum: [ai_generated, ai_edited, manual]
+          description: "Filtruj po sposobie utworzenia fiszki"
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+            default: created_at
+          description: "Pole do sortowania"
+        - name: sortOrder
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+          description: "Kierunek sortowania"
+      responses:
+        "200":
+          description: Lista fiszek
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlashcardListResponse"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/FlashcardSetNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/flashcard-sets/{set_id}/flashcards/{id}:
+    parameters:
+      - name: set_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Identyfikator zestawu fiszek
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Identyfikator fiszki
+
+    patch:
+      summary: Aktualizuj fiszkę
+      description: Aktualizuje istniejącą fiszkę w zestawie
+      tags:
+        - Flashcards
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              minProperties: 1
+              properties:
+                question:
+                  type: string
+                  maxLength: 200
+                  example: "Co to jest TypeScript? (zaktualizowane)"
+                  description: "Nowe pytanie na fiszce"
+                answer:
+                  type: string
+                  maxLength: 500
+                  example: "TypeScript to statycznie typowany nadzbiór JavaScript który kompiluje się do czystego JavaScript."
+                  description: "Nowa odpowiedź na fiszce"
+                is_deleted:
+                  type: boolean
+                  example: false
+                  description: "Czy fiszka ma być oznaczona jako usunięta (soft delete)"
+      responses:
+        "200":
+          description: Fiszka została zaktualizowana pomyślnie
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlashcardResponse"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/FlashcardNotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+  schemas:
+    FlashcardResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+          description: "Unikalny identyfikator fiszki"
+        set_id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440001"
+          description: "Identyfikator zestawu do którego należy fiszka"
+        question:
+          type: string
+          example: "Co to jest TypeScript?"
+          description: "Pytanie na fiszce"
+        answer:
+          type: string
+          example: "TypeScript to typowany nadzbiór JavaScript który kompiluje się do czystego JavaScript."
+          description: "Odpowiedź na fiszce"
+        creation_type:
+          type: string
+          enum: [ai_generated, ai_edited, manual]
+          example: "manual"
+          description: "Sposób utworzenia fiszki"
+        created_at:
+          type: string
+          format: date-time
+          example: "2024-01-15T10:30:00Z"
+          description: "Data i czas utworzenia fiszki"
+      required:
+        - id
+        - set_id
+        - question
+        - answer
+        - creation_type
+        - created_at
+
+    FlashcardListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/FlashcardResponse"
+          description: "Lista fiszek na aktualnej stronie"
+        total:
+          type: integer
+          example: 25
+          description: "Całkowita liczba fiszek spełniających kryteria"
+        page:
+          type: integer
+          example: 1
+          description: "Numer aktualnej strony"
+        limit:
+          type: integer
+          example: 30
+          description: "Liczba elementów na stronę"
+      required:
+        - items
+        - total
+        - page
+        - limit
+
+  responses:
+    ValidationError:
+      description: Błąd walidacji danych wejściowych
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Invalid input data"
+                description: "Ogólny komunikat błędu"
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                      example: "too_small"
+                    path:
+                      type: array
+                      items:
+                        type: string
+                      example: ["question"]
+                    message:
+                      type: string
+                      example: "Question is required"
+                description: "Szczegółowe informacje o błędach walidacji"
+
+    Unauthorized:
+      description: Brak autoryzacji - token nieprawidłowy lub brakujący
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Unauthorized"
+
+    FlashcardSetNotFound:
+      description: Zestaw fiszek nie został znaleziony lub użytkownik nie ma do niego dostępu
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Flashcard set not found"
+
+    FlashcardNotFound:
+      description: Fiszka nie została znaleziona lub nie należy do tego zestawu
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Flashcard not found"
+
+    FlashcardLimitExceeded:
+      description: Przekroczono limit fiszek w zestawie (maksymalnie 30)
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Flashcard limit exceeded (30 per set)"
+
+    InternalError:
+      description: Wewnętrzny błąd serwera
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Internal server error"

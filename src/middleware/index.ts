@@ -6,13 +6,16 @@ export const onRequest = defineMiddleware(async ({ request, locals }, next) => {
   locals.supabase = supabaseClient;
 
   // Get JWT token from Authorization header
-  const authHeader = request.headers.get('Authorization');
+  const authHeader = request.headers.get("Authorization");
   if (authHeader) {
-    const token = authHeader.replace('Bearer ', '');
-    
+    const token = authHeader.replace("Bearer ", "");
+
     // Get user data from token
-    const { data: { user }, error } = await supabaseClient.auth.getUser(token);
-    
+    const {
+      data: { user },
+      error,
+    } = await supabaseClient.auth.getUser(token);
+
     if (!error && user) {
       locals.user = user;
       // Create a new client instance with the user token

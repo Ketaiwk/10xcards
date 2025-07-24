@@ -1,18 +1,18 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { 
-  FlashcardSetResponse, 
-  FlashcardSetListResponse, 
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type {
+  FlashcardSetResponse,
+  FlashcardSetListResponse,
   CreateFlashcardSetCommand,
   UpdateFlashcardSetCommand,
-  PaginationParams
-} from '@/types';
+  PaginationParams,
+} from "@/types";
 
 export class FlashcardSetService {
   constructor(private readonly supabase: SupabaseClient) {}
 
   async create(userId: string, command: CreateFlashcardSetCommand): Promise<FlashcardSetResponse> {
     const { data, error } = await this.supabase
-      .from('flashcard_sets')
+      .from("flashcard_sets")
       .insert({
         user_id: userId,
         name: command.name,
@@ -30,18 +30,18 @@ export class FlashcardSetService {
   }
 
   async list(userId: string, params: PaginationParams): Promise<FlashcardSetListResponse> {
-    const { page = 1, limit = 10, sortBy = 'created_at', sortOrder = 'desc' } = params;
+    const { page = 1, limit = 10, sortBy = "created_at", sortOrder = "desc" } = params;
     const offset = (page - 1) * limit;
 
     let query = this.supabase
-      .from('flashcard_sets')
-      .select('*', { count: 'exact' })
-      .eq('user_id', userId)
-      .eq('is_deleted', false);
+      .from("flashcard_sets")
+      .select("*", { count: "exact" })
+      .eq("user_id", userId)
+      .eq("is_deleted", false);
 
     // Apply sorting
     if (sortBy && sortOrder) {
-      query = query.order(sortBy, { ascending: sortOrder === 'asc' });
+      query = query.order(sortBy, { ascending: sortOrder === "asc" });
     }
 
     // Apply pagination
@@ -63,16 +63,16 @@ export class FlashcardSetService {
 
   async getById(userId: string, setId: string): Promise<FlashcardSetResponse> {
     const { data, error } = await this.supabase
-      .from('flashcard_sets')
+      .from("flashcard_sets")
       .select()
-      .eq('user_id', userId)
-      .eq('id', setId)
-      .eq('is_deleted', false)
+      .eq("user_id", userId)
+      .eq("id", setId)
+      .eq("is_deleted", false)
       .single();
 
     if (error) {
-      if (error.code === 'PGRST116') {
-        throw new Error('Flashcard set not found');
+      if (error.code === "PGRST116") {
+        throw new Error("Flashcard set not found");
       }
       throw new Error(`Failed to get flashcard set: ${error.message}`);
     }
@@ -82,21 +82,21 @@ export class FlashcardSetService {
 
   async update(userId: string, setId: string, command: UpdateFlashcardSetCommand): Promise<FlashcardSetResponse> {
     const { data, error } = await this.supabase
-      .from('flashcard_sets')
+      .from("flashcard_sets")
       .update({
         name: command.name,
         description: command.description,
         is_deleted: command.is_deleted,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
-      .eq('user_id', userId)
-      .eq('id', setId)
+      .eq("user_id", userId)
+      .eq("id", setId)
       .select()
       .single();
 
     if (error) {
-      if (error.code === 'PGRST116') {
-        throw new Error('Flashcard set not found');
+      if (error.code === "PGRST116") {
+        throw new Error("Flashcard set not found");
       }
       throw new Error(`Failed to update flashcard set: ${error.message}`);
     }
@@ -116,7 +116,7 @@ export class FlashcardSetService {
       ai_accepted_count: data.ai_accepted_count,
       ai_edited_count: data.ai_edited_count,
       manual_count: data.manual_count,
-      generation_duration: data.generation_duration
+      generation_duration: data.generation_duration,
     };
   }
 }
