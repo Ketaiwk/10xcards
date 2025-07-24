@@ -1,6 +1,7 @@
 # Schema bazy danych PostgreSQL dla 10xCards
 
-## 1. Lista tabel z kolumnami, typami danych i ograniczeniami
+
+CREATE TABLE public.flashcard_## 1. Lista tabel z kolumnami, typami danych i ograniczeniami
 
 ### 1.1. Tabela: users (rozszerzenie auth.users z Supabase)
 
@@ -20,8 +21,7 @@ CREATE INDEX users_email_idx ON public.users(email);
 
 ### 1.2. Tabela: flashcard_sets
 
-```sql
-CREATE TABLE public.flashcard_sets (
+```sqlsets (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,

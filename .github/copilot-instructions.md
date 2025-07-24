@@ -1,6 +1,6 @@
-# AI Rules for {{project-name}}
+# AI Rules for 10xCards`
 
-{{project-description}}
+10xCards to aplikacja webowa, która automatyzuje proces tworzenia fiszek edukacyjnych za pomocą AI. Umożliwia użytkownikom generowanie, edytowanie i zarządzanie fiszkami w prosty i intuicyjny sposób. Produkt jest skierowany do osób uczących się, które chcą efektywnie korzystać z metody spaced repetition.
 
 ## Tech Stack
 
@@ -81,7 +81,7 @@ When modifying the directory structure, always update this section.
 - Leverage View Transitions API for smooth page transitions (use ClientRouter)
 - Use content collections with type safety for blog posts, documentation, etc.
 - Leverage Server Endpoints for API routes
-- Use POST, GET  - uppercase format for endpoint handlers
+- Use POST, GET - uppercase format for endpoint handlers
 - Use `export const prerender = false` for API routes
 - Use zod for input validation in API routes
 - Extract logic into services in `src/lib/services`

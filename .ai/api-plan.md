@@ -232,15 +232,18 @@
 
 ### 3.1. Authentication
 
-- Uses Supabase Auth for JWT-based authentication
-- JWT token must be included in Authorization header
-- Format: `Authorization: Bearer <token>`
+- Uses Supabase Auth for secure token-based authentication
+- Supports email/password, magic link, and OAuth (Google, GitHub) providers
+- Requires `Authorization: Bearer <token>` header in all API requests
+- Automatic token refresh via Supabase client
 
 ### 3.2. Authorization
 
 - Row Level Security (RLS) enforced at database level
-- API endpoints verify user ownership of resources
-- Users can only access their own flashcard sets and cards
+- Users can only access their own resources (flashcard sets, cards)
+- Error responses:
+  - 401: Invalid/missing token
+  - 403: Insufficient permissions
 
 ## 4. Validation & Business Logic
 
