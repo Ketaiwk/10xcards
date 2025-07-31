@@ -1,0 +1,15 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import FlashcardSetCreationView from "@/components/flashcard-set/FlashcardSetCreationView";
+import { Toaster } from "sonner";
+
+export const prerender = false;
+---
+
+<Layout title="Nowy zestaw fiszek">
+  <main class="container mx-auto py-8">
+    <h1 class="text-4xl font-bold mb-8">Utwórz nowy zestaw fiszek</h1>
+    <FlashcardSetCreationView client:load />
+    <Toaster client:load richColors />
+  </main>
+</Layout>

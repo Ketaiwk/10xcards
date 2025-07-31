@@ -2,6 +2,11 @@ import type { APIRoute } from "astro";
 import { FlashcardSetService } from "@/lib/services/flashcard-set.service";
 import { updateFlashcardSetSchema } from "@/lib/schemas/flashcard-set.schema";
 
+interface CustomError extends Error {
+  name: string;
+  errors?: unknown[];
+}
+
 export const GET: APIRoute = async ({ params, locals }) => {
   try {
     if (!locals.user?.id) {
@@ -26,7 +31,9 @@ export const GET: APIRoute = async ({ params, locals }) => {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-  } catch (error) {
+  } catch (err) {
+    const error = err as CustomError;
+    
     if (error.message === "Flashcard set not found") {
       return new Response(JSON.stringify({ error: error.message }), {
         status: 404,
@@ -74,8 +81,10 @@ export const PATCH: APIRoute = async ({ request, params, locals }) => {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-  } catch (error) {
-    if (error.name === "ZodError") {
+  } catch (err) {
+    const error = err as CustomError;
+
+    if (error.name === "ZodError" && error.errors) {
       return new Response(
         JSON.stringify({
           error: "Validation error",
