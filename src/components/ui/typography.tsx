@@ -1,16 +1,24 @@
-import * as React from "react"
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import { cn } from "@/lib/utils";
 
-type TypographyVariant = 
-  | 'display01' | 'display02' | 'display03' | 'display04'
-  | 'heading01' | 'heading02' | 'heading03' | 'heading04'
-  | 'body01' | 'body02'
-  | 'helper'
-  | 'label01' | 'label02'
+type TypographyVariant =
+  | "display01"
+  | "display02"
+  | "display03"
+  | "display04"
+  | "heading01"
+  | "heading02"
+  | "heading03"
+  | "heading04"
+  | "body01"
+  | "body02"
+  | "helper"
+  | "label01"
+  | "label02";
 
 interface TypographyProps extends React.HTMLAttributes<HTMLElement> {
-  variant: TypographyVariant
-  as?: keyof JSX.IntrinsicElements
+  variant: TypographyVariant;
+  as?: keyof JSX.IntrinsicElements;
 }
 
 const variantStyles: Record<TypographyVariant, string> = {
@@ -36,11 +44,11 @@ const variantStyles: Record<TypographyVariant, string> = {
   // Label styles
   label01: "text-sm font-medium",
   label02: "text-xs font-medium",
-}
+};
 
 const Typography = React.forwardRef<HTMLElement, TypographyProps>(
   ({ variant, as, className, children, ...props }, ref) => {
-    const Component = as || defaultElementForVariant(variant)
+    const Component = as || defaultElementForVariant(variant);
 
     return React.createElement(
       Component,
@@ -50,24 +58,24 @@ const Typography = React.forwardRef<HTMLElement, TypographyProps>(
         ...props,
       },
       children
-    )
+    );
   }
-)
+);
 
 function defaultElementForVariant(variant: TypographyVariant): keyof JSX.IntrinsicElements {
-  if (variant.startsWith('display') || variant.startsWith('heading')) {
-    const level = variant.slice(-2)
-    return `h${level}` as keyof JSX.IntrinsicElements
+  if (variant.startsWith("display") || variant.startsWith("heading")) {
+    const level = variant.slice(-2);
+    return `h${level}` as keyof JSX.IntrinsicElements;
   }
-  
-  if (variant.startsWith('label')) {
-    return 'label'
+
+  if (variant.startsWith("label")) {
+    return "label";
   }
-  
-  return 'p'
+
+  return "p";
 }
 
-Typography.displayName = "Typography"
+Typography.displayName = "Typography";
 
-export { Typography }
-export type { TypographyVariant, TypographyProps }
+export { Typography };
+export type { TypographyVariant, TypographyProps };

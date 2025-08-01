@@ -1,5 +1,5 @@
-import React from "react"
-import { Button } from "@/components/ui/button"
+import React from "react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogTrigger,
@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 
 export function ExampleDialog() {
   return (
@@ -19,9 +19,7 @@ export function ExampleDialog() {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Example Dialog</DialogTitle>
-          <DialogDescription>
-            This is a description of the dialog content and purpose.
-          </DialogDescription>
+          <DialogDescription>This is a description of the dialog content and purpose.</DialogDescription>
         </DialogHeader>
         <div className="px-6 py-4">
           <p>This is the main content of the dialog. You can put any content here.</p>
@@ -32,5 +30,5 @@ export function ExampleDialog() {
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
