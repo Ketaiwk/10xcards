@@ -28,6 +28,21 @@ interface FlashcardSetCreationState {
   error?: string;
 }
 
+const getAuthToken = () => {
+  const token = localStorage.getItem("supabase.auth.token");
+  if (!token) {
+    console.warn("No auth token available!");
+  }
+  return token;
+};
+
+const getAuthHeader = () => {
+  const token = getAuthToken();
+  const header = token ? `Bearer ${token}` : "";
+  console.log("Auth header:", header);
+  return header;
+};
+
 const useFlashcardSetCreation = () => {
   const [state, setState] = useState<FlashcardSetCreationState>({
     name: "",
@@ -49,9 +64,16 @@ const useFlashcardSetCreation = () => {
     setState((prev) => ({ ...prev, isGenerating: true, sourceText }));
     try {
       showInfo("Trwa tworzenie zestawu i generowanie fiszek...");
+      const authHeader = getAuthHeader();
+      if (!authHeader) {
+        throw new Error("Brak tokenu autoryzacyjnego");
+      }
       const response = await fetch("/api/flashcard-sets", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: authHeader,
+        },
         body: JSON.stringify({
           name: state.name,
           description: state.description,
@@ -65,7 +87,11 @@ const useFlashcardSetCreation = () => {
       }
 
       const set = await response.json();
-      const flashcardsResponse = await fetch(`/api/flashcard-sets/${set.id}/flashcards`);
+      const flashcardsResponse = await fetch(`/api/flashcard-sets/${set.id}/flashcards`, {
+        headers: {
+          Authorization: getAuthHeader(),
+        },
+      });
 
       if (!flashcardsResponse.ok) {
         throw new Error("Nie udało się pobrać wygenerowanych fiszek");
@@ -89,7 +115,10 @@ const useFlashcardSetCreation = () => {
     try {
       const response = await fetch(`/api/flashcard-sets/${state.flashcards[0].set_id}/flashcards/${id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: getAuthHeader(),
+        },
         body: JSON.stringify(data),
       });
 
@@ -114,6 +143,9 @@ const useFlashcardSetCreation = () => {
     try {
       const response = await fetch(`/api/flashcard-sets/${state.flashcards[0].set_id}/flashcards/${id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: getAuthHeader(),
+        },
       });
 
       if (!response.ok) {
@@ -138,7 +170,10 @@ const useFlashcardSetCreation = () => {
     try {
       const response = await fetch(`/api/flashcard-sets/${state.flashcards[0].set_id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: getAuthHeader(),
+        },
         body: JSON.stringify({
           name: state.name,
           description: state.description,
@@ -165,6 +200,9 @@ const useFlashcardSetCreation = () => {
         state.flashcards.map((f) =>
           fetch(`/api/flashcard-sets/${f.set_id}/flashcards/${f.id}`, {
             method: "DELETE",
+            headers: {
+              Authorization: getAuthHeader(),
+            },
           })
         )
       );
@@ -187,6 +225,9 @@ const useFlashcardSetCreation = () => {
 
       const response = await fetch(`/api/flashcard-sets/${setId}`, {
         method: "DELETE",
+        headers: {
+          Authorization: getAuthHeader(),
+        },
       });
 
       if (!response.ok) {

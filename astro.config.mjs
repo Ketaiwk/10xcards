@@ -13,6 +13,9 @@ export default defineConfig({
   server: { port: 3000 },
   vite: {
     plugins: [tailwindcss()],
+    define: {
+      "import.meta.env.TEST_USER_TOKEN": JSON.stringify(process.env.TEST_USER_TOKEN),
+    },
   },
   adapter: node({
     mode: "standalone",
