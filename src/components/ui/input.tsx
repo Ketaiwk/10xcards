@@ -2,20 +2,78 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-function Input({ className, type, ...props }: React.ComponentProps<"input">) {
-  return (
-    <input
-      type={type}
-      data-slot="input"
-      className={cn(
-        "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-        "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-        "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
-        className
-      )}
-      {...props}
-    />
-  )
+interface InputProps extends Omit<React.ComponentProps<"input">, 'size'> {
+  label?: string;
+  helperText?: string;
+  error?: string;
+  size?: 'sm' | 'md' | 'lg';
 }
 
-export { Input }
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, type, label, helperText, error, size = 'md', ...props }, ref) => {
+    const inputId = React.useId();
+    
+    const sizeStyles = {
+      sm: 'h-8',
+      md: 'h-10',
+      lg: 'h-12'
+    };
+
+    return (
+      <div className="flex flex-col gap-1">
+        {label && (
+          <label 
+            htmlFor={inputId}
+            className="text-sm font-medium text-gray-700"
+          >
+            {label}
+          </label>
+        )}
+        <input
+          ref={ref}
+          id={inputId}
+          type={type}
+          data-slot="input"
+          className={cn(
+            // Base styles
+            "w-full min-w-0 bg-white border border-gray-300 rounded-none px-3",
+            "text-base text-gray-900 placeholder:text-gray-500",
+            
+            // Size variants
+            sizeStyles[size],
+            
+            // Interactive states
+            "hover:border-gray-400",
+            "focus:border-blue-600 focus:ring-2 focus:ring-blue-100 focus:outline-none",
+            
+            // Error state
+            error && "border-red-500 focus:border-red-500 focus:ring-red-100",
+            
+            // Disabled state
+            "disabled:bg-gray-100 disabled:border-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed",
+            
+            className
+          )}
+          aria-invalid={error ? "true" : undefined}
+          aria-describedby={helperText || error ? `${inputId}-description` : undefined}
+          {...props}
+        />
+        {(helperText || error) && (
+          <p 
+            id={`${inputId}-description`}
+            className={cn(
+              "text-sm",
+              error ? "text-red-500" : "text-gray-500"
+            )}
+          >
+            {error || helperText}
+          </p>
+        )}
+      </div>
+    );
+  }
+);
+
+Input.displayName = "Input";
+
+export { Input };

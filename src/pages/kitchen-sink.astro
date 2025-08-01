@@ -1,0 +1,265 @@
+---
+import Layout from "@/layouts/Layout.astro"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
+import { Navigation, NavigationGroup, NavigationItem } from "@/components/ui/navigation"
+import { List, ListItem } from "@/components/ui/list"
+import { Form, FormSection, FormGroup, FormLabel, FormDescription, FormMessage, FormActions } from "@/components/ui/form"
+import { Notification } from "@/components/ui/feedback"
+import { Spinner } from "@/components/ui/spinner"
+import { Progress } from "@/components/ui/progress"
+import { IconWrapper } from "@/components/common/IconWrapper"
+import { ExampleDialog } from "@/components/examples/ExampleDialog"
+import { Home, Users, Settings, Bell, Mail, CheckCircle, Clock, XCircle } from "lucide-react"
+---
+
+<Layout title="Kitchen Sink - Component Examples">
+  <main class="min-h-screen bg-gray-50 p-8">
+    <div class="mx-auto max-w-7xl space-y-12">
+      
+      <!-- Typography -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Typography</h2>
+        <div class="space-y-4 rounded-lg bg-white p-6 shadow-sm">
+          <h1 class="text-7xl font-light">Display 01</h1>
+          <h2 class="text-6xl font-light">Display 02</h2>
+          <h3 class="text-5xl font-light">Display 03</h3>
+          <h1 class="text-3xl font-semibold">Heading 01</h1>
+          <h2 class="text-2xl font-semibold">Heading 02</h2>
+          <h3 class="text-xl font-semibold">Heading 03</h3>
+          <p class="text-base">Body 01 - Regular text</p>
+          <p class="text-sm">Body 02 - Small text</p>
+          <p class="text-xs text-gray-600">Helper text</p>
+          <label class="text-sm font-medium">Label 01</label>
+        </div>
+      </section>
+
+      <!-- Buttons -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Buttons</h2>
+        <div class="space-y-4 rounded-lg bg-white p-6 shadow-sm">
+          <div class="flex flex-wrap gap-4">
+            <Button client:load>Primary Button</Button>
+            <Button client:load variant="secondary">Secondary Button</Button>
+            <Button client:load variant="ghost">Ghost Button</Button>
+          </div>
+          <div class="flex flex-wrap gap-4">
+            <Button client:load size="sm">Small Button</Button>
+            <Button client:load>Medium Button</Button>
+            <Button client:load size="lg">Large Button</Button>
+          </div>
+          <div class="flex flex-wrap gap-4">
+            <Button client:load disabled>Disabled Button</Button>
+            <Button client:load className="w-full">Full Width Button</Button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Inputs -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold text-navy-600">Inputs</h2>
+        <div class="space-y-4 rounded-lg bg-white p-6 shadow-sm">
+          <div class="grid gap-4 md:grid-cols-2">
+            <Input client:load label="Default Input" placeholder="Enter text..." />
+            <Input client:load label="With Helper Text" helperText="This is a helper text" placeholder="Enter text..." />
+            <Input client:load label="With Error" error="This field is required" placeholder="Enter text..." />
+            <Input client:load label="Disabled Input" disabled placeholder="Can't edit this" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Cards -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold text-navy-600">Cards</h2>
+        <div class="grid gap-6 md:grid-cols-2">
+          <Card client:load>
+            <CardHeader>
+              <CardTitle>Card Title</CardTitle>
+              <CardDescription>This is a basic card with header and content.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p>Card content goes here. This is a simple example of a card layout.</p>
+            </CardContent>
+            <CardFooter>
+              <Button variant="ghost">Cancel</Button>
+              <Button>Save</Button>
+            </CardFooter>
+          </Card>
+
+          <Card client:load>
+            <CardHeader>
+              <CardTitle>Interactive Card</CardTitle>
+              <CardDescription>This card has interactive elements.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Form className="space-y-4">
+                <Input client:load label="Name" placeholder="Enter your name" />
+                <Input client:load label="Email" type="email" placeholder="Enter your email" />
+              </Form>
+            </CardContent>
+            <CardFooter>
+              <Button variant="ghost">Cancel</Button>
+              <Button>Submit</Button>
+            </CardFooter>
+          </Card>
+        </div>
+      </section>
+
+      <!-- Dialog -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold text-navy-600">Dialog</h2>
+        <div class="space-y-4 rounded-lg bg-white p-6 shadow-sm">
+          <ExampleDialog client:only="react" />
+        </div>
+      </section>
+
+      <!-- Navigation -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold text-navy-600">Navigation</h2>
+        <div class="rounded-lg bg-white shadow-sm">
+          <Navigation client:load className="w-full md:w-64">
+            <NavigationGroup>
+              <NavigationItem href="#" active>
+                <IconWrapper client:load icon={Home} />
+                Dashboard
+              </NavigationItem>
+              <NavigationItem href="#">
+                <IconWrapper client:load icon={Users} />
+                Users
+              </NavigationItem>
+              <NavigationItem href="#">
+                <IconWrapper client:load icon={Settings} />
+                Settings
+              </NavigationItem>
+            </NavigationGroup>
+            <NavigationGroup title="Communication">
+              <NavigationItem href="#">
+                <IconWrapper client:load icon={Bell} />
+                Notifications
+              </NavigationItem>
+              <NavigationItem href="#">
+                <IconWrapper client:load icon={Mail} />
+                Messages
+              </NavigationItem>
+            </NavigationGroup>
+          </Navigation>
+        </div>
+      </section>
+
+      <!-- Lists -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Lists</h2>
+        <div class="grid gap-6 md:grid-cols-2">
+          <div class="rounded-lg bg-white p-6 shadow-sm">
+            <List client:load variant="ordered" className="mb-6">
+              <ListItem>First ordered item</ListItem>
+              <ListItem>Second ordered item</ListItem>
+              <ListItem>Third ordered item</ListItem>
+            </List>
+
+            <List client:load variant="unordered">
+              <ListItem>Unordered list item</ListItem>
+              <ListItem>Another unordered item</ListItem>
+              <ListItem>Final unordered item</ListItem>
+            </List>
+          </div>
+
+          <div class="rounded-lg bg-white p-6 shadow-sm">
+            <List client:load spacing="relaxed" dividers>
+              <ListItem>
+                <IconWrapper client:load icon={CheckCircle} className="h-5 w-5 text-green-500" />
+                <span>Completed task with icon</span>
+              </ListItem>
+              <ListItem>
+                <IconWrapper client:load icon={Clock} className="h-5 w-5 text-yellow-500" />
+                <span>Pending task with icon</span>
+              </ListItem>
+              <ListItem>
+                <IconWrapper client:load icon={XCircle} className="h-5 w-5 text-red-500" />
+                <span>Failed task with icon</span>
+              </ListItem>
+            </List>
+          </div>
+        </div>
+      </section>
+
+      <!-- Forms -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Forms</h2>
+        <div class="rounded-lg bg-white p-6 shadow-sm">
+          <Form>
+            <FormSection>
+              <FormGroup>
+                <FormLabel required>Full Name</FormLabel>
+                <Input client:load placeholder="Enter your full name" />
+                <FormDescription>Enter your legal full name as it appears on your ID.</FormDescription>
+              </FormGroup>
+
+              <FormGroup>
+                <FormLabel>Email</FormLabel>
+                <Input client:load type="email" placeholder="Enter your email" />
+                <FormMessage>Please enter a valid email address.</FormMessage>
+              </FormGroup>
+            </FormSection>
+
+            <FormActions>
+              <Button client:load variant="ghost">Cancel</Button>
+              <Button client:load>Submit</Button>
+            </FormActions>
+          </Form>
+        </div>
+      </section>
+
+      <!-- Feedback -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Feedback</h2>
+        <div class="space-y-4">
+          <div class="space-y-4">
+            <Notification client:load variant="info" title="Information">
+              This is an informational message.
+            </Notification>
+            <Notification client:load variant="success" title="Success">
+              Operation completed successfully.
+            </Notification>
+            <Notification client:load variant="warning" title="Warning">
+              Please review your input before continuing.
+            </Notification>
+            <Notification client:load variant="error" title="Error">
+              An error occurred while processing your request.
+            </Notification>
+          </div>
+
+          <div class="rounded-lg bg-white p-6 shadow-sm">
+            <div class="flex items-center gap-8">
+              <div class="text-center">
+                <Spinner client:load size="sm" />
+                <p class="mt-2 text-sm">Small</p>
+              </div>
+              <div class="text-center">
+                <Spinner client:load />
+                <p class="mt-2 text-sm">Medium</p>
+              </div>
+              <div class="text-center">
+                <Spinner client:load size="lg" />
+                <p class="mt-2 text-sm">Large</p>
+              </div>
+            </div>
+
+            <div class="mt-8 space-y-4">
+              <div>
+                <p class="mb-2 text-sm font-medium">Determinate Progress</p>
+                <Progress client:load value={75} max={100} />
+              </div>
+              <div>
+                <p class="mb-2 text-sm font-medium">Indeterminate Progress</p>
+                <Progress client:load />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</Layout>

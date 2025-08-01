@@ -2,12 +2,28 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-function Card({ className, ...props }: React.ComponentProps<"div">) {
+interface CardProps extends React.ComponentProps<"div"> {
+  interactive?: boolean
+}
+
+function Card({ className, interactive = false, ...props }: CardProps) {
   return (
     <div
       data-slot="card"
       className={cn(
-        "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",
+        // Base styles
+        "bg-white text-gray-900 flex flex-col gap-4 border border-gray-300",
+        
+        // Spacing
+        "p-5",
+        
+        // Interactive states
+        interactive && [
+          "cursor-pointer transition-shadow duration-150",
+          "hover:shadow-md hover:border-gray-400",
+          "active:shadow-sm active:border-gray-500",
+        ],
+        
         className
       )}
       {...props}
