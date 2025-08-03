@@ -5,10 +5,12 @@ import { Textarea } from "@/components/ui/textarea";
 interface SourceTextFormProps {
   onGenerate: (text: string) => Promise<void>;
   isGenerating: boolean;
+  value?: string;
+  onChange?: (text: string) => void;
 }
 
-export function SourceTextForm({ onGenerate, isGenerating }: SourceTextFormProps) {
-  const [sourceText, setSourceText] = useState("");
+export function SourceTextForm({ onGenerate, isGenerating, value, onChange }: SourceTextFormProps) {
+  const [sourceText, setSourceText] = useState(value || "");
   const [error, setError] = useState<string | null>(null);
   const [showHint, setShowHint] = useState(false);
 
@@ -90,8 +92,11 @@ export function SourceTextForm({ onGenerate, isGenerating }: SourceTextFormProps
         )}{" "}
         <Textarea
           id="sourceText"
-          value={sourceText}
-          onChange={(e) => setSourceText(e.target.value)}
+          value={value !== undefined ? value : sourceText}
+          onChange={(e) => {
+            setSourceText(e.target.value);
+            onChange?.(e.target.value);
+          }}
           onKeyDown={handleKeyDown}
           placeholder="Wprowadź tekst źródłowy do wygenerowania fiszek..."
           className="h-[200px] resize-none"

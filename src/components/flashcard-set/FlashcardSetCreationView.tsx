@@ -63,45 +63,44 @@ const useFlashcardSetCreation = () => {
 
     setState((prev) => ({ ...prev, isGenerating: true, sourceText }));
     try {
-      showInfo("Trwa tworzenie zestawu i generowanie fiszek...");
-      const authHeader = getAuthHeader();
-      if (!authHeader) {
-        throw new Error("Brak tokenu autoryzacyjnego");
-      }
-      const response = await fetch("/api/flashcard-sets", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: authHeader,
+      // Tymczasowo używamy mocków - docelowo będzie to generowanie przez AI
+      const mockFlashcards: FlashcardViewModel[] = [
+        {
+          id: crypto.randomUUID(),
+          set_id: "", // będzie ustawione po zapisaniu zestawu
+          question: "Co to jest spaced repetition?",
+          answer: "Technika nauki polegająca na powtarzaniu materiału w optymalnych odstępach czasu.",
+          isEditing: false,
+          creation_type: "ai_generated" as const,
+          created_at: new Date().toISOString(),
         },
-        body: JSON.stringify({
-          name: state.name,
-          description: state.description,
-          source_text: sourceText,
-          generate_ai_cards: true,
-        } as CreateFlashcardSetCommand),
-      });
-
-      if (!response.ok) {
-        throw new Error("Nie udało się utworzyć zestawu fiszek");
-      }
-
-      const set = await response.json();
-      const flashcardsResponse = await fetch(`/api/flashcard-sets/${set.id}/flashcards`, {
-        headers: {
-          Authorization: getAuthHeader(),
+        {
+          id: crypto.randomUUID(),
+          set_id: "", // będzie ustawione po zapisaniu zestawu
+          question: "Jakies randomowe pytanie?",
+          answer: "Jakas losowa odpowiedz.",
+          isEditing: false,
+          creation_type: "ai_generated" as const,
+          created_at: new Date().toISOString(),
         },
-      });
+        {
+          id: crypto.randomUUID(),
+          set_id: "", // będzie ustawione po zapisaniu zestawu
+          question: "Jakie są zalety korzystania z fiszek?",
+          answer: "1. Aktywne uczenie się\n2. Łatwe powtarzanie\n3. Możliwość nauki w dowolnym miejscu",
+          isEditing: false,
+          creation_type: "ai_generated" as const,
+          created_at: new Date().toISOString(),
+        },
+      ];
 
-      if (!flashcardsResponse.ok) {
-        throw new Error("Nie udało się pobrać wygenerowanych fiszek");
-      }
-
-      const { items } = await flashcardsResponse.json();
       setState((prev) => ({
         ...prev,
-        flashcards: items.map((f: FlashcardResponse) => ({ ...f, isEditing: false })),
+        flashcards: mockFlashcards,
+        isGenerating: false,
+        generationProgress: 100,
       }));
+
       showSuccess("Pomyślnie wygenerowano fiszki!");
     } catch (error) {
       const message = error instanceof Error ? error.message : "Wystąpił błąd podczas generowania fiszek";
@@ -120,6 +119,7 @@ const useFlashcardSetCreation = () => {
 
   const editFlashcard = async (id: string, data: UpdateFlashcardCommand) => {
     try {
+      // Tylko aktualizacja stanu lokalnego
       const flashcard = state.flashcards.find((f) => f.id === id);
       if (!flashcard) return;
 
@@ -128,23 +128,9 @@ const useFlashcardSetCreation = () => {
         creation_type: flashcard.creation_type === "ai_generated" ? "ai_edited" : flashcard.creation_type,
       };
 
-      const response = await fetch(`/api/flashcard-sets/${state.flashcards[0].set_id}/flashcards/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: getAuthHeader(),
-        },
-        body: JSON.stringify(updatedData),
-      });
-
-      if (!response.ok) {
-        throw new Error("Nie udało się zaktualizować fiszki");
-      }
-
-      const updatedFlashcard = await response.json();
       setState((prev) => ({
         ...prev,
-        flashcards: prev.flashcards.map((f) => (f.id === id ? { ...updatedFlashcard, isEditing: false } : f)),
+        flashcards: prev.flashcards.map((f) => (f.id === id ? { ...f, ...updatedData, isEditing: false } : f)),
       }));
     } catch (error) {
       setState((prev) => ({
@@ -155,38 +141,24 @@ const useFlashcardSetCreation = () => {
   };
 
   const deleteFlashcard = async (id: string) => {
-    try {
-      const response = await fetch(`/api/flashcard-sets/${state.flashcards[0].set_id}/flashcards/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: getAuthHeader(),
-        },
-        body: JSON.stringify({ is_deleted: true }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Nie udało się usunąć fiszki");
-      }
-
-      setState((prev) => ({
-        ...prev,
-        flashcards: prev.flashcards.filter((f) => f.id !== id),
-      }));
-    } catch (error) {
-      setState((prev) => ({
-        ...prev,
-        error: "Wystąpił błąd podczas usuwania fiszki",
-      }));
-    }
+    // Tylko aktualizacja stanu lokalnego
+    setState((prev) => ({
+      ...prev,
+      flashcards: prev.flashcards.filter((f) => f.id !== id),
+    }));
   };
 
   const saveSet = async () => {
-    // Set is already saved when generating flashcards
+    if (!state.name.trim()) {
+      showError("Nazwa zestawu jest wymagana przed zapisaniem");
+      return;
+    }
+
     setState((prev) => ({ ...prev, isSaving: true }));
     try {
-      const response = await fetch(`/api/flashcard-sets/${state.flashcards[0].set_id}`, {
-        method: "PATCH",
+      // 1. Najpierw zapisujemy zestaw
+      const setResponse = await fetch("/api/flashcard-sets", {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: getAuthHeader(),
@@ -194,12 +166,37 @@ const useFlashcardSetCreation = () => {
         body: JSON.stringify({
           name: state.name,
           description: state.description,
+          source_text: state.sourceText,
+          generate_ai_cards: false, // nie generujemy ponownie, bo już mamy wygenerowane
         }),
       });
 
-      if (!response.ok) {
+      if (!setResponse.ok) {
         throw new Error("Nie udało się zapisać zestawu");
       }
+
+      const setData = await setResponse.json();
+
+      // 2. Następnie zapisujemy wszystkie fiszki
+      const flashcardsPromises = state.flashcards.map((flashcard) =>
+        fetch(`/api/flashcard-sets/${setData.id}/flashcards`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: getAuthHeader(),
+          },
+          body: JSON.stringify({
+            question: flashcard.question,
+            answer: flashcard.answer,
+            creation_type: flashcard.creation_type,
+          }),
+        })
+      );
+
+      await Promise.all(flashcardsPromises);
+
+      showSuccess("Zestaw został pomyślnie zapisany");
+      navigate("/sets");
     } catch (error) {
       setState((prev) => ({
         ...prev,
@@ -213,17 +210,11 @@ const useFlashcardSetCreation = () => {
   const deleteAllFlashcards = async () => {
     setState((prev) => ({ ...prev, isDeleting: true }));
     try {
-      await Promise.all(
-        state.flashcards.map((f) =>
-          fetch(`/api/flashcard-sets/${f.set_id}/flashcards/${f.id}`, {
-            method: "DELETE",
-            headers: {
-              Authorization: getAuthHeader(),
-            },
-          })
-        )
-      );
-      setState((prev) => ({ ...prev, flashcards: [] }));
+      // Czyścimy tylko stan lokalny
+      setState((prev) => ({
+        ...prev,
+        flashcards: [],
+      }));
     } catch (error) {
       setState((prev) => ({
         ...prev,
@@ -235,37 +226,14 @@ const useFlashcardSetCreation = () => {
   };
 
   const deleteSet = async () => {
-    setState((prev) => ({ ...prev, isDeleting: true }));
-    try {
-      const setId = state.flashcards[0]?.set_id;
-      if (!setId) return;
-
-      const response = await fetch(`/api/flashcard-sets/${setId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: getAuthHeader(),
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Nie udało się usunąć zestawu");
-      }
-
-      setState((prev) => ({
-        ...prev,
-        flashcards: [],
-        name: "",
-        description: "",
-        sourceText: "",
-      }));
-    } catch (error) {
-      setState((prev) => ({
-        ...prev,
-        error: "Wystąpił błąd podczas usuwania zestawu",
-      }));
-    } finally {
-      setState((prev) => ({ ...prev, isDeleting: false }));
-    }
+    // Przed zapisaniem zestawu wystarczy wyczyścić stan lokalny
+    setState((prev) => ({
+      ...prev,
+      flashcards: [],
+      name: "",
+      description: "",
+      sourceText: "",
+    }));
   };
 
   const updateState = (updater: (prev: FlashcardSetCreationState) => FlashcardSetCreationState) => {
@@ -305,22 +273,21 @@ const FlashcardSetCreationView = () => {
         description={state.description || ""}
         onNameChange={(name: string) => {
           updateState((prev) => ({ ...prev, name }));
-          if (state.flashcards.length > 0) {
-            saveSet();
-          }
         }}
         onDescriptionChange={(description: string) => {
           updateState((prev) => ({ ...prev, description }));
-          if (state.flashcards.length > 0) {
-            saveSet();
-          }
         }}
         disabled={state.isGenerating || state.isSaving}
       />
 
       <div className="border rounded-lg p-6 space-y-6 bg-card">
         <h2 className="text-2xl font-semibold">Tekst źródłowy</h2>
-        <SourceTextForm onGenerate={generateFlashcards} isGenerating={state.isGenerating} />
+        <SourceTextForm
+          onGenerate={generateFlashcards}
+          isGenerating={state.isGenerating}
+          value={state.sourceText}
+          onChange={(text) => updateState((prev) => ({ ...prev, sourceText: text }))}
+        />
       </div>
 
       {state.isGenerating && (

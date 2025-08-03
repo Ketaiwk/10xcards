@@ -26,37 +26,6 @@ export class FlashcardSetService {
       throw new Error(`Failed to create flashcard set: ${setError.message}`);
     }
 
-    // Dodaj przykładowe fiszki
-    const mockFlashcards = [
-      {
-        set_id: setData.id,
-        question: "Co to jest spaced repetition?",
-        answer: "Technika nauki polegająca na powtarzaniu materiału w optymalnych odstępach czasu, aby zwiększyć efektywność zapamiętywania.",
-        creation_type: "ai_generated" as const,
-      },
-      {
-        set_id: setData.id,
-        question: "Jakie są zalety korzystania z fiszek?",
-        answer: "1. Aktywne uczenie się\n2. Łatwe powtarzanie materiału\n3. Możliwość nauki w dowolnym miejscu\n4. Szybka weryfikacja wiedzy",
-        creation_type: "ai_generated" as const,
-      },
-      {
-        set_id: setData.id,
-        question: "Jak efektywnie tworzyć fiszki?",
-        answer: "1. Używaj prostego języka\n2. Jedna informacja na fiszkę\n3. Dodawaj przykłady\n4. Regularnie je przeglądaj",
-        creation_type: "ai_generated" as const,
-      },
-    ];
-
-    const { error: flashcardsError } = await this.supabase
-      .from("flashcards")
-      .insert(mockFlashcards);
-
-    if (flashcardsError) {
-      console.error("Failed to create sample flashcards:", flashcardsError);
-      // Nie przerywamy wykonania, bo zestaw został już utworzony
-    }
-
     return this.mapToResponse(setData);
   }
 

@@ -1,6 +1,13 @@
 import { z } from "zod";
 
 /**
+ * Schema for generating flashcards from text
+ */
+export const FlashcardGenerationSchema = z.object({
+  sourceText: z.string().min(1, "Source text is required").max(5000, "Source text must be at most 5000 characters"),
+});
+
+/**
  * Schema for creating a new flashcard
  */
 export const createFlashcardSchema = z.object({

@@ -1,6 +1,8 @@
 export const useNavigate = () => {
   const navigate = (path: string) => {
-    window.location.href = path;
+    // Use the current origin (protocol + hostname + port)
+    const baseUrl = window.location.origin;
+    window.location.href = `${baseUrl}${path}`;
   };
 
   return navigate;
