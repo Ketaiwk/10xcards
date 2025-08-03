@@ -3,8 +3,7 @@ const testUserToken = import.meta.env.TEST_USER_TOKEN;
 ---
 
 <script define:vars={{ testUserToken }}>
-  // Initialize auth token in localStorage if not present
-  if (!localStorage.getItem("supabase.auth.token") && testUserToken) {
+  if (testUserToken && localStorage.getItem("supabase.auth.token") !== testUserToken) {
     console.log("Setting auth token in localStorage");
     localStorage.setItem("supabase.auth.token", testUserToken);
     console.log("Auth token set:", localStorage.getItem("supabase.auth.token"));

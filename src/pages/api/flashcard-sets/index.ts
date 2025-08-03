@@ -22,11 +22,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    if (error.name === "ZodError") {
+    // Type guard for ZodError
+    if (error && typeof error === "object" && "name" in error && error.name === "ZodError") {
       return new Response(
         JSON.stringify({
           error: "Validation error",
-          details: error.errors,
+          details: typeof error === "object" && error !== null && "errors" in error ? (error as any).errors : [],
         }),
         {
           status: 400,
@@ -69,18 +70,23 @@ export const GET: APIRoute = async ({ request, locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    if (error.name === "ZodError") {
-      return new Response(
-        JSON.stringify({
-          error: "Validation error",
-          details: error.errors,
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
+  if (
+    error &&
+    typeof error === "object" &&
+    "name" in error &&
+    (error as { name?: string }).name === "ZodError"
+  ) {
+    return new Response(
+      JSON.stringify({
+        error: "Validation error",
+        details: "errors" in error ? (error as any).errors : [],
+      }),
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
 
     console.error("Error listing flashcard sets:", error);
     return new Response(

@@ -10,7 +10,7 @@ interface SourceTextFormProps {
 export function SourceTextForm({ onGenerate, isGenerating }: SourceTextFormProps) {
   const [sourceText, setSourceText] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [showHint, setShowHint] = useState(true);
+  const [showHint, setShowHint] = useState(false);
 
   const validateSourceText = (text: string) => {
     if (text.length < 1000) {

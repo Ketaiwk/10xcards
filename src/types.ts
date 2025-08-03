@@ -70,7 +70,7 @@ export type FlashcardResponse = Pick<
   "id" | "set_id" | "question" | "answer" | "creation_type" | "created_at"
 >;
 
-export type UpdateFlashcardCommand = Partial<Pick<FlashcardRow, "question" | "answer" | "is_deleted">>;
+export type UpdateFlashcardCommand = Partial<Pick<FlashcardRow, "question" | "answer" | "is_deleted" | "creation_type">>;
 
 export type FlashcardListResponse = PaginatedResponse<FlashcardResponse>;
 

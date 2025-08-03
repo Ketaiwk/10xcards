@@ -111,15 +111,30 @@ const useFlashcardSetCreation = () => {
     }
   };
 
+  const setFlashcardEditingState = (id: string, isEditing: boolean) => {
+    setState((prev) => ({
+      ...prev,
+      flashcards: prev.flashcards.map((f) => (f.id === id ? { ...f, isEditing } : f)),
+    }));
+  };
+
   const editFlashcard = async (id: string, data: UpdateFlashcardCommand) => {
     try {
+      const flashcard = state.flashcards.find(f => f.id === id);
+      if (!flashcard) return;
+
+      const updatedData = {
+        ...data,
+        creation_type: flashcard.creation_type === 'ai_generated' ? 'ai_edited' : flashcard.creation_type,
+      };
+
       const response = await fetch(`/api/flashcard-sets/${state.flashcards[0].set_id}/flashcards/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: getAuthHeader(),
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(updatedData),
       });
 
       if (!response.ok) {
@@ -142,10 +157,12 @@ const useFlashcardSetCreation = () => {
   const deleteFlashcard = async (id: string) => {
     try {
       const response = await fetch(`/api/flashcard-sets/${state.flashcards[0].set_id}/flashcards/${id}`, {
-        method: "DELETE",
+        method: "PATCH",
         headers: {
+          "Content-Type": "application/json",
           Authorization: getAuthHeader(),
         },
+        body: JSON.stringify({ is_deleted: true }),
       });
 
       if (!response.ok) {
@@ -264,6 +281,7 @@ const useFlashcardSetCreation = () => {
     saveSet,
     deleteAllFlashcards,
     deleteSet,
+    setFlashcardEditingState,
   };
 };
 
@@ -277,6 +295,7 @@ const FlashcardSetCreationView = () => {
     saveSet,
     deleteAllFlashcards,
     deleteSet,
+    setFlashcardEditingState,
   } = useFlashcardSetCreation();
 
   return (
@@ -323,7 +342,12 @@ const FlashcardSetCreationView = () => {
             />
           </div>
 
-          <FlashcardList flashcards={state.flashcards} onEdit={editFlashcard} onDelete={deleteFlashcard} />
+          <FlashcardList 
+            flashcards={state.flashcards} 
+            onEdit={editFlashcard} 
+            onDelete={deleteFlashcard}
+            onEditStateChange={setFlashcardEditingState}
+          />
         </div>
       )}
     </div>
