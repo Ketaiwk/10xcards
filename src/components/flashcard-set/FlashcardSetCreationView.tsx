@@ -120,12 +120,12 @@ const useFlashcardSetCreation = () => {
 
   const editFlashcard = async (id: string, data: UpdateFlashcardCommand) => {
     try {
-      const flashcard = state.flashcards.find(f => f.id === id);
+      const flashcard = state.flashcards.find((f) => f.id === id);
       if (!flashcard) return;
 
       const updatedData = {
         ...data,
-        creation_type: flashcard.creation_type === 'ai_generated' ? 'ai_edited' : flashcard.creation_type,
+        creation_type: flashcard.creation_type === "ai_generated" ? "ai_edited" : flashcard.creation_type,
       };
 
       const response = await fetch(`/api/flashcard-sets/${state.flashcards[0].set_id}/flashcards/${id}`, {
@@ -342,9 +342,9 @@ const FlashcardSetCreationView = () => {
             />
           </div>
 
-          <FlashcardList 
-            flashcards={state.flashcards} 
-            onEdit={editFlashcard} 
+          <FlashcardList
+            flashcards={state.flashcards}
+            onEdit={editFlashcard}
             onDelete={deleteFlashcard}
             onEditStateChange={setFlashcardEditingState}
           />
