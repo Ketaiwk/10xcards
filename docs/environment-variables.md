@@ -3,6 +3,7 @@
 ## Setup
 
 1. Copy the example environment file:
+
    ```bash
    cp .env.example .env
    ```
@@ -12,9 +13,9 @@
 ### Required Variables
 
 - **SUPABASE_URL**: URL your Supabase project
-- **SUPABASE_KEY**: Supabase anon/public key  
+- **SUPABASE_KEY**: Supabase anon/public key
 - **SUPABASE_SERVICE_KEY**: Supabase service role key (for scripts)
-- **OPENROUTER_API_KEY**: OpenRouter API key for AI functionality
+- **VITE_OPENROUTER_API_KEY**: OpenRouter API key for AI functionality (musi mieć prefiks VITE\_ aby być dostępnym po stronie klienta)
 
 ### Test Variables (for development scripts)
 
@@ -45,10 +46,12 @@ npm run tsx scripts/add-user.ts
 ## Local Development vs Production
 
 ### Local Development
+
 - Uses local Supabase instance (127.0.0.1:54321)
 - Demo keys and tokens are safe to use
 
 ### Production
+
 - Uses production Supabase URLs
 - Requires real API keys and secure tokens
 - Never use test credentials in production

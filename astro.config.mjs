@@ -13,6 +13,7 @@ export default defineConfig({
   server: { port: 3000 },
   vite: {
     plugins: [tailwindcss()],
+    envPrefix: ["VITE_", "PUBLIC_", "ASTRO_"],
     define: {
       "import.meta.env.TEST_USER_TOKEN": JSON.stringify(process.env.TEST_USER_TOKEN),
     },

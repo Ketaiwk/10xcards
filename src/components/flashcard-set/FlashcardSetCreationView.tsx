@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "@/components/hooks/useNavigate";
 import { useNotifications } from "@/components/hooks/useNotifications";
 import type { CreateFlashcardSetCommand, FlashcardResponse, UpdateFlashcardCommand } from "@/types";
+import { OpenRouterService } from "@/lib/services/openrouter/openrouter.service";
 import { SourceTextForm } from "./SourceTextForm";
 import { ProgressIndicator } from "./ProgressIndicator";
 import { FlashcardList } from "./FlashcardList";
@@ -61,49 +62,63 @@ const useFlashcardSetCreation = () => {
       return;
     }
 
-    setState((prev) => ({ ...prev, isGenerating: true, sourceText }));
+    setState((prev) => ({
+      ...prev,
+      isGenerating: true,
+      sourceText,
+      generationProgress: 0,
+    }));
+
+    const openRouter = new OpenRouterService();
+    const maxCards = 30;
+
     try {
-      // Tymczasowo używamy mocków - docelowo będzie to generowanie przez AI
-      const mockFlashcards: FlashcardViewModel[] = [
-        {
-          id: crypto.randomUUID(),
-          set_id: "", // będzie ustawione po zapisaniu zestawu
-          question: "Co to jest spaced repetition?",
-          answer: "Technika nauki polegająca na powtarzaniu materiału w optymalnych odstępach czasu.",
-          isEditing: false,
-          creation_type: "ai_generated" as const,
-          created_at: new Date().toISOString(),
-        },
-        {
-          id: crypto.randomUUID(),
-          set_id: "", // będzie ustawione po zapisaniu zestawu
-          question: "Jakies randomowe pytanie?",
-          answer: "Jakas losowa odpowiedz.",
-          isEditing: false,
-          creation_type: "ai_generated" as const,
-          created_at: new Date().toISOString(),
-        },
-        {
-          id: crypto.randomUUID(),
-          set_id: "", // będzie ustawione po zapisaniu zestawu
-          question: "Jakie są zalety korzystania z fiszek?",
-          answer: "1. Aktywne uczenie się\n2. Łatwe powtarzanie\n3. Możliwość nauki w dowolnym miejscu",
-          isEditing: false,
-          creation_type: "ai_generated" as const,
-          created_at: new Date().toISOString(),
-        },
-      ];
+      await openRouter.generateFlashcards(sourceText, maxCards, {}, (progress, newCard) => {
+        setState((prev) => {
+          const flashcard: FlashcardViewModel = {
+            id: crypto.randomUUID(),
+            set_id: "",
+            question: newCard.front,
+            answer: newCard.back,
+            isEditing: false,
+            creation_type: "ai_generated" as const,
+            created_at: new Date().toISOString(),
+          };
+
+          return {
+            ...prev,
+            generationProgress: progress,
+            flashcards: [...prev.flashcards, flashcard],
+          };
+        });
+      });
 
       setState((prev) => ({
         ...prev,
-        flashcards: mockFlashcards,
         isGenerating: false,
         generationProgress: 100,
       }));
 
       showSuccess("Pomyślnie wygenerowano fiszki!");
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Wystąpił błąd podczas generowania fiszek";
+      let message = "Wystąpił błąd podczas generowania fiszek";
+      if (error instanceof Error) {
+        message = error.message;
+        // Dodatkowa obsługa błędów specyficznych dla OpenRouter
+        if ("type" in error) {
+          switch (error.type) {
+            case "auth_error":
+              message = "Błąd autoryzacji - sprawdź klucz API";
+              break;
+            case "rate_limit":
+              message = "Przekroczono limit zapytań - spróbuj ponownie za chwilę";
+              break;
+            case "validation_error":
+              message = "Nieprawidłowe dane wejściowe - sprawdź tekst źródłowy";
+              break;
+          }
+        }
+      }
       showError(message);
     } finally {
       setState((prev) => ({ ...prev, isGenerating: false }));

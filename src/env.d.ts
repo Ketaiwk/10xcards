@@ -16,7 +16,7 @@ interface ImportMetaEnv {
   readonly SUPABASE_URL: string;
   readonly SUPABASE_KEY: string;
   readonly SUPABASE_SERVICE_KEY: string;
-  readonly OPENROUTER_API_KEY: string;
+  readonly VITE_OPENROUTER_API_KEY: string;  // zmieniono na VITE_
   readonly TEST_USER_EMAIL: string;
   readonly TEST_USER_TOKEN: string;
   readonly TEST_USER_PASSWORD: string;

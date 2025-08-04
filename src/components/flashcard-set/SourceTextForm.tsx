@@ -9,13 +9,12 @@ interface SourceTextFormProps {
   onChange?: (text: string) => void;
 }
 
-export function SourceTextForm({ onGenerate, isGenerating, value, onChange }: SourceTextFormProps) {
-  const [sourceText, setSourceText] = useState(value || "");
+export function SourceTextForm({ onGenerate, isGenerating, value = "", onChange }: SourceTextFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [showHint, setShowHint] = useState(false);
 
   const validateSourceText = (text: string) => {
-    if (text.length < 1000) {
+    if (!text || text.length < 1000) {
       return "Tekst źródłowy musi zawierać co najmniej 1000 znaków";
     }
     if (text.length > 10000) {
@@ -26,7 +25,12 @@ export function SourceTextForm({ onGenerate, isGenerating, value, onChange }: So
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const validationError = validateSourceText(sourceText);
+    if (!value) {
+      setError("Tekst źródłowy jest wymagany");
+      return;
+    }
+
+    const validationError = validateSourceText(value);
     if (validationError) {
       setError(validationError);
       // Fokus na polu tekstowym i ogłoszenie błędu dla czytników ekranu
@@ -42,7 +46,7 @@ export function SourceTextForm({ onGenerate, isGenerating, value, onChange }: So
     statusElement.textContent = "Rozpoczynam generowanie fiszek. Proszę czekać...";
     document.body.appendChild(statusElement);
 
-    await onGenerate(sourceText);
+    await onGenerate(value);
 
     // Usuń element statusu po zakończeniu
     statusElement.remove();
@@ -92,10 +96,18 @@ export function SourceTextForm({ onGenerate, isGenerating, value, onChange }: So
         )}{" "}
         <Textarea
           id="sourceText"
-          value={value !== undefined ? value : sourceText}
+          value={value}
           onChange={(e) => {
-            setSourceText(e.target.value);
             onChange?.(e.target.value);
+            // Informuj o długości tekstu tylko gdy przekroczy 1000 znaków
+            if (e.target.value.length >= 1000 && value.length < 1000) {
+              const statusElement = document.createElement("div");
+              statusElement.setAttribute("role", "status");
+              statusElement.setAttribute("aria-live", "polite");
+              statusElement.textContent = "Osiągnięto wymaganą długość tekstu";
+              document.body.appendChild(statusElement);
+              setTimeout(() => statusElement.remove(), 2000);
+            }
           }}
           onKeyDown={handleKeyDown}
           placeholder="Wprowadź tekst źródłowy do wygenerowania fiszek..."
@@ -107,18 +119,6 @@ export function SourceTextForm({ onGenerate, isGenerating, value, onChange }: So
           required
           minLength={1000}
           maxLength={10000}
-          onPaste={(e) => {
-            // Informuj o udanym wklejeniu tekstu
-            setTimeout(() => {
-              const length = e.currentTarget.value.length;
-              const statusElement = document.createElement("div");
-              statusElement.setAttribute("role", "status");
-              statusElement.setAttribute("aria-live", "polite");
-              statusElement.textContent = `Wklejono tekst o długości ${length} znaków.`;
-              document.body.appendChild(statusElement);
-              setTimeout(() => statusElement.remove(), 2000);
-            }, 100);
-          }}
         />
         {error && (
           <p id="sourceText-error" className="text-sm text-red-500" role="alert">
@@ -126,19 +126,19 @@ export function SourceTextForm({ onGenerate, isGenerating, value, onChange }: So
           </p>
         )}
         <div id="sourceText-description" className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">Liczba znaków: {sourceText.length}/10000 (minimum 1000)</p>
+          <p className="text-sm text-muted-foreground">Liczba znaków: {value.length}/10000 (minimum 1000)</p>
           <p
-            className={`text-sm ${sourceText.length >= 1000 ? "text-green-600 dark:text-green-400" : "text-muted-foreground"}`}
+            className={`text-sm ${value.length >= 1000 ? "text-green-600 dark:text-green-400" : "text-muted-foreground"}`}
             aria-live="polite"
           >
-            {sourceText.length >= 1000
+            {value.length >= 1000
               ? "✓ Wystarczająca długość tekstu"
-              : `Potrzebne jeszcze ${1000 - sourceText.length} znaków`}
+              : `Potrzebne jeszcze ${1000 - value.length} znaków`}
           </p>
         </div>
       </div>
       <div className="flex flex-col space-y-2">
-        <Button type="submit" disabled={isGenerating || !sourceText.trim()} aria-busy={isGenerating} className="w-full">
+        <Button type="submit" disabled={isGenerating || !value.trim()} aria-busy={isGenerating} className="w-full">
           {isGenerating ? (
             <span className="inline-flex items-center">
               <span className="animate-spin mr-2">⏳</span>
