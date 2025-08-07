@@ -42,11 +42,25 @@ Manualne tworzenie wysokiej jakości fiszek edukacyjnych jest czasochłonne i zn
   - Użytkownik widzi listę wszystkich fiszek.
   - Użytkownik może usunąć wybraną fiszkę.
 
-### US-004: Bezpieczne logowanie
-- **Opis:** Jako użytkownik chcę logować się do systemu, aby moje fiszki były bezpieczne.
+## US-004: Kolekcje fiszek
+- **Opis:** Jako użytkownik chcę móc zapisywać i edytować zestawy fiszek, aby móc się z nich uczyć.
+- Kryteria akceptacji:
+  - Użytkownik może zapisać aktualny zestaw fiszek.
+  - Użytkownik może aktualizować zestaw.
+  - Użytkownik może usunąć zestaw.
+  - Funkcjonalność zestawów nie jest dostępna bez logowania się do systemu (US-001, US-002, US-003).
+
+## US-005: Bezpieczny dostęp i uwierzytelnianie
+- **Opis:** Jako użytkownik chcę mieć możliwość rejestracji i logowania się do systemu w sposób zapewniający bezpieczeństwo moich danych.
 - **Kryteria akceptacji:**
-  - Użytkownik może zarejestrować konto za pomocą e-maila i hasła.
-  - Użytkownik może zalogować się na swoje konto.
+  - Logowanie i rejestracja odbywają się na dedykowanych stronach.
+  - Logowanie wymaga podania adresu email i hasła.
+  - Rejestracja wymaga podania adresu email, hasła i potwierdzenia hasła.
+  - Użytkownik NIE MOŻE korzystać z fiszek i zestawów fiszek bez logowania się do systemu (US-001, US-002, US-003).
+  - Użytkownik może logować się do systemu poprzez przycisk w prawym górnym rogu.
+  - Użytkownik może się wylogować z systemu poprzez przycisk w prawym górnym rogu w głównym @Layout.astro.
+  - Nie korzystamy z zewnętrznych serwisów logowania (np. Google, GitHub).
+  - Odzyskiwanie hasła powinno być możliwe.
 
 ## 6. Metryki sukcesu
 - 75% fiszek wygenerowanych przez AI jest akceptowanych przez użytkownika.

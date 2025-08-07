@@ -1,0 +1,11 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { AuthLayout } from "@/components/auth/AuthLayout";
+import { RegisterForm } from "@/components/auth/RegisterForm";
+---
+
+<Layout title="Rejestracja - 10xCards">
+  <AuthLayout client:load title="Stwórz konto" description="Dołącz do społeczności i twórz własne zestawy fiszek">
+    <RegisterForm client:load />
+  </AuthLayout>
+</Layout>
