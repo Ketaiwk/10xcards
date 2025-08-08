@@ -20,10 +20,19 @@ if (user) {
   const returnUrl = Astro.url.searchParams.get("returnUrl") || "/";
   return Astro.redirect(returnUrl);
 }
+
+// Sprawdź, czy użytkownik przyszedł ze strony rejestracji
+const message = Astro.url.searchParams.get("message");
 ---
 
 <Layout title="Logowanie - 10xCards">
-  <AuthLayout client:load title="Witaj z powrotem!" description="Zaloguj się do swojego konta">
+  <AuthLayout
+    client:load
+    title="Witaj z powrotem!"
+    description={message === "verify-email"
+      ? "Sprawdź swoją skrzynkę email, aby potwierdzić konto. Po potwierdzeniu możesz się zalogować."
+      : "Zaloguj się do swojego konta"}
+  >
     <LoginForm client:load />
   </AuthLayout>
 </Layout>

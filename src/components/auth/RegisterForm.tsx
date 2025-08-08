@@ -12,21 +12,6 @@ import {
 } from "@/components/ui/form";
 import { IconWrapper } from "@/components/common/IconWrapper";
 import { Mail, Lock, User } from "lucide-react";
-
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Form,
-  FormSection,
-  FormGroup,
-  FormLabel,
-  FormDescription,
-  FormMessage,
-  FormActions,
-} from "@/components/ui/form";
-import { IconWrapper } from "@/components/common/IconWrapper";
-import { Mail, Lock, User } from "lucide-react";
 import { useNotifications } from "@/components/hooks/useNotifications";
 import { useNavigate } from "@/components/hooks/useNavigate";
 
@@ -79,13 +64,16 @@ export function RegisterForm() {
       const data: RegisterResponse = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error?.message || "Wystąpił błąd podczas rejestracji");
+        const errorMessage = data.message || data.error?.message || "Wystąpił błąd podczas rejestracji";
+        throw new Error(errorMessage);
       }
 
-      showSuccess(data.message || "Rejestracja zakończona pomyślnie. Sprawdź swoją skrzynkę email.");
+      showSuccess(
+        data.message || "Rejestracja zakończona pomyślnie. Sprawdź swoją skrzynkę email aby potwierdzić konto."
+      );
 
       // Przekierowanie na stronę logowania po pomyślnej rejestracji
-      navigate("/auth/login");
+      navigate("/auth/login?message=verify-email");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Wystąpił nieoczekiwany błąd";
       setError(message);
