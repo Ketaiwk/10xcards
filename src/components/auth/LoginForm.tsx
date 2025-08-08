@@ -12,14 +12,25 @@ import {
 } from "@/components/ui/form";
 import { IconWrapper } from "@/components/common/IconWrapper";
 import { Mail, Lock } from "lucide-react";
+import { useNotifications } from "@/components/hooks/useNotifications";
+import { useNavigate } from "@/components/hooks/useNavigate";
 
-interface LoginFormProps {
-  onSubmit?: (email: string, password: string) => Promise<void>;
+interface LoginResponse {
+  error?: {
+    message: string;
+    details?: Array<{ message: string }>;
+  };
+  user?: {
+    id: string;
+    email: string;
+  };
 }
 
-export function LoginForm({ onSubmit }: LoginFormProps) {
+export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { showError, showSuccess } = useNotifications();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,9 +42,29 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
     setIsLoading(true);
 
     try {
-      await onSubmit?.(email, password);
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data: LoginResponse = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error?.message || "Wystąpił błąd podczas logowania");
+      }
+
+      showSuccess("Zalogowano pomyślnie!");
+
+      // Przekierowanie na stronę główną lub returnUrl jeśli istnieje
+      const returnUrl = new URLSearchParams(window.location.search).get("returnUrl");
+      navigate(returnUrl || "/");
     } catch (err) {
-      setError("Wystąpił błąd podczas logowania. Spróbuj ponownie.");
+      const message = err instanceof Error ? err.message : "Wystąpił nieoczekiwany błąd";
+      setError(message);
+      showError(message);
     } finally {
       setIsLoading(false);
     }

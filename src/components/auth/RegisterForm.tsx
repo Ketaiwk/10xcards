@@ -13,16 +13,43 @@ import {
 import { IconWrapper } from "@/components/common/IconWrapper";
 import { Mail, Lock, User } from "lucide-react";
 
-interface RegisterFormProps {
-  onSubmit?: (email: string, password: string, name: string) => Promise<void>;
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Form,
+  FormSection,
+  FormGroup,
+  FormLabel,
+  FormDescription,
+  FormMessage,
+  FormActions,
+} from "@/components/ui/form";
+import { IconWrapper } from "@/components/common/IconWrapper";
+import { Mail, Lock, User } from "lucide-react";
+import { useNotifications } from "@/components/hooks/useNotifications";
+import { useNavigate } from "@/components/hooks/useNavigate";
+
+interface RegisterResponse {
+  error?: {
+    message: string;
+    details?: Array<{ message: string }>;
+  };
+  message?: string;
+  user?: {
+    id: string;
+    email: string;
+  };
 }
 
-export function RegisterForm({ onSubmit }: RegisterFormProps) {
+export function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState<string | null>(null);
+  const { showError, showSuccess } = useNotifications();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -41,9 +68,28 @@ export function RegisterForm({ onSubmit }: RegisterFormProps) {
     setIsLoading(true);
 
     try {
-      await onSubmit?.(email, password, name);
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password, name }),
+      });
+
+      const data: RegisterResponse = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error?.message || "Wystąpił błąd podczas rejestracji");
+      }
+
+      showSuccess(data.message || "Rejestracja zakończona pomyślnie. Sprawdź swoją skrzynkę email.");
+
+      // Przekierowanie na stronę logowania po pomyślnej rejestracji
+      navigate("/auth/login");
     } catch (err) {
-      setError("Wystąpił błąd podczas rejestracji. Spróbuj ponownie.");
+      const message = err instanceof Error ? err.message : "Wystąpił nieoczekiwany błąd";
+      setError(message);
+      showError(message);
     } finally {
       setIsLoading(false);
     }

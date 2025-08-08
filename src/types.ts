@@ -48,6 +48,19 @@ export type FlashcardSetResponse = Pick<
   | "generation_duration"
 >;
 
+// Typy dla autoryzacji
+export interface LocalUser {
+  id: string;
+  email: string | null;
+}
+
+// Rozszerzenie Astro.locals
+declare module 'astro' {
+  interface Locals {
+    user: import('@supabase/supabase-js').User | null;
+    supabase: import('@supabase/supabase-js').SupabaseClient<Database>;
+  }
+}
 export type UpdateFlashcardSetCommand = Partial<Pick<FlashcardSetRow, "name" | "description" | "is_deleted">>;
 
 /** Response type for flashcard set list item */

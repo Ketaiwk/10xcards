@@ -2,6 +2,24 @@
 import Layout from "@/layouts/Layout.astro";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { LoginForm } from "@/components/auth/LoginForm";
+import { createSupabaseServerInstance } from "@/db/supabase.client";
+
+export const prerender = false;
+
+// Sprawdź czy użytkownik jest już zalogowany
+const supabase = createSupabaseServerInstance({
+  cookies: Astro.cookies,
+  headers: new Headers(Astro.request.headers),
+});
+const {
+  data: { user },
+} = await supabase.auth.getUser();
+
+// Jeśli użytkownik jest zalogowany, przekieruj go
+if (user) {
+  const returnUrl = Astro.url.searchParams.get("returnUrl") || "/";
+  return Astro.redirect(returnUrl);
+}
 ---
 
 <Layout title="Logowanie - 10xCards">
