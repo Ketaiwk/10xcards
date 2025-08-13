@@ -32,17 +32,32 @@ npx tsx scripts/add-user.ts
 ## Table of Contents
 
 - [10xCards](#10xcards)
+  - [Quick Start](#quick-start)
   - [Table of Contents](#table-of-contents)
   - [Features](#features)
   - [Tech Stack](#tech-stack)
     - [Frontend](#frontend)
     - [Backend \& Database](#backend--database)
     - [AI Integration](#ai-integration)
+    - [Testing \& Quality](#testing--quality)
     - [CI/CD \& Hosting](#cicd--hosting)
   - [Getting Started](#getting-started)
     - [Prerequisites](#prerequisites)
     - [Installation](#installation)
+    - [Local Development Setup](#local-development-setup)
+    - [Testing the API](#testing-the-api)
+    - [Supabase Studio](#supabase-studio)
+    - [Stopping Services](#stopping-services)
   - [Available Scripts](#available-scripts)
+  - [Troubleshooting](#troubleshooting)
+    - [Common Issues](#common-issues)
+    - [Getting Help](#getting-help)
+  - [API Documentation](#api-documentation)
+    - [Authentication](#authentication)
+    - [Endpoints](#endpoints)
+      - [Flashcard Sets](#flashcard-sets)
+      - [Example Usage](#example-usage)
+  - [Project Structure](#project-structure)
   - [Project Scope](#project-scope)
     - [Current Features](#current-features)
     - [Limitations](#limitations)
@@ -76,9 +91,22 @@ npx tsx scripts/add-user.ts
 
 - [Openrouter.ai](https://openrouter.ai/) - AI Models
 
+### Testing & Quality
+
+- [Vitest](https://vitest.dev/) + [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) - Unit tests
+- [MSW](https://mswjs.io/) - API mocking
+- [Playwright](https://playwright.dev/) - E2E testing
+- [Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci) - Performance monitoring
+- [Axe](https://www.deque.com/axe/) + [pa11y](https://pa11y.org/) - Accessibility testing
+- [k6](https://k6.io/) - Load testing
+- [OpenTelemetry](https://opentelemetry.io/) + [DataDog](https://www.datadoghq.com/) - Production monitoring
+- [SonarCloud](https://sonarcloud.io/) - Code quality analysis
+
 ### CI/CD & Hosting
 
 - GitHub Actions
+- CodeQL - Security analysis
+- Dependabot - Dependency updates
 - DigitalOcean
 
 ## Getting Started
@@ -229,6 +257,10 @@ Ctrl+C
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build
 - `npm run astro` - Run Astro CLI commands
+- `npm run test` - Run unit tests with Vitest
+- `npm run test:watch` - Run unit tests in watch mode
+- `npm run test:e2e` - Run E2E tests with Playwright
+- `npm run test:coverage` - Generate test coverage report
 - `npm run lint` - Run ESLint
 - `npm run lint:fix` - Fix ESLint errors
 - `npm run format` - Format code with Prettier

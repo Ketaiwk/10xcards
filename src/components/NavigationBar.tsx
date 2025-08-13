@@ -22,16 +22,19 @@ export function NavigationBar({ user }: NavigationBarProps) {
       });
 
       if (response.ok) {
-        // Przekierowanie do strony głównej po wylogowaniu
         window.location.href = "/";
       }
     } catch (error) {
       console.error("Błąd podczas wylogowywania:", error);
     }
+
+    const handleLogin = () => {
+      window.location.href = "/auth/login";
+    };
   };
 
   return (
-    <nav className="w-full border-b">
+    <nav className="w-full border-b" role="banner">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <a href="/" className="text-xl font-bold">
           10xCards
@@ -55,7 +58,7 @@ export function NavigationBar({ user }: NavigationBarProps) {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button asChild>
+            <Button asChild variant="default">
               <a href="/auth/login">Zaloguj się</a>
             </Button>
           )}
