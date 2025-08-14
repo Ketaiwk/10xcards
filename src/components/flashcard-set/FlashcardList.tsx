@@ -46,10 +46,16 @@ export function FlashcardList({ flashcards, onEdit, onDelete, onEditStateChange 
                       <p className="text-sm text-muted-foreground">{flashcard.answer}</p>
                     </div>
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm" onClick={() => onEditStateChange(flashcard.id, true)}>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => onEditStateChange(flashcard.id, true)}
+                      >
                         Edytuj
                       </Button>
                       <Button
+                        type="button"
                         variant="outline"
                         size="sm"
                         className="text-destructive"
