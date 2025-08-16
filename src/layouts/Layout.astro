@@ -9,10 +9,9 @@ interface Props {
 }
 
 const { title = "10xCards" } = Astro.props;
+
 const user =
-  Astro.locals.user && typeof Astro.locals.user === "object"
-    ? { email: Astro.locals.user.email ?? null }
-    : undefined;
+  Astro.locals.user && typeof Astro.locals.user === "object" ? { email: Astro.locals.user.email ?? null } : undefined;
 ---
 
 <!doctype html>
@@ -27,7 +26,7 @@ const user =
   </head>
   <body>
     <div class="min-h-screen flex flex-col">
-      <NavigationBar client:load user={user} />
+      <NavigationBar client:only="react" user={user} />
       <main class="flex-1">
         <slot />
       </main>

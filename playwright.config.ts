@@ -1,4 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
+import dotenv from 'dotenv';
+
+// Zawsze ładuj zmienne testowe dla Playwright
+dotenv.config({ path: '.env.test' });
 
 export default defineConfig({
   testDir: './src/tests/e2e',
@@ -8,11 +12,13 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:3001',
+    baseURL: 'http://localhost:3000',
     trace: 'on-first-retry',
     video: 'on-first-retry',
-    actionTimeout: 10000,
-    navigationTimeout: 10000,
+    actionTimeout: 15000,
+    navigationTimeout: 15000,
+    // Włączamy tryb debugowania dla pierwszego uruchomienia
+    headless: false,
   },
   projects: [
     {
@@ -22,7 +28,7 @@ export default defineConfig({
   ],
   webServer: {
     command: 'pnpm dev',
-    url: 'http://localhost:3001',
+    url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120000, // 2 minuty na uruchomienie serwera
   },

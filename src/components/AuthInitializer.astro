@@ -1,11 +1,37 @@
 ---
-const testUserToken = import.meta.env.TEST_USER_TOKEN;
+import { getSupabaseClient } from "@/lib/supabase/client";
+
+// Inicjalizacja klienta Supabase po stronie serwera
+const supabase = getSupabaseClient();
+
+// Sprawdź aktualną sesję
+const {
+  data: { session },
+} = await supabase.auth.getSession();
+
+// Przekaż URL i klucz do skryptu klienckiego
+const config = {
+  supabaseUrl: import.meta.env.PUBLIC_SUPABASE_URL,
+  supabaseKey: import.meta.env.PUBLIC_SUPABASE_ANON_KEY,
+};
 ---
 
-<script define:vars={{ testUserToken }}>
-  if (testUserToken && localStorage.getItem("supabase.auth.token") !== testUserToken) {
-    console.log("Setting auth token in localStorage");
-    localStorage.setItem("supabase.auth.token", testUserToken);
-    console.log("Auth token set:", localStorage.getItem("supabase.auth.token"));
-  }
+<script define:vars={{ config }}>
+  import { getSupabaseClient } from "/src/lib/supabase/client";
+
+  // Skrypt do obsługi zmiany stanu autoryzacji
+  window.addEventListener("load", () => {
+    const supabase = getSupabaseClient();
+
+    // Nasłuchuj na zmiany w stanie autoryzacji
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN") {
+        // Odśwież stronę po zalogowaniu
+        window.location.reload();
+      } else if (event === "SIGNED_OUT") {
+        // Wyczyść token i przekieruj
+        window.location.href = "/auth/login";
+      }
+    });
+  });
 </script>
