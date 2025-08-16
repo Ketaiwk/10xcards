@@ -1,9 +1,9 @@
-import { z } from 'zod';
-import type { APIRoute } from 'astro';
-import { createSupabaseServerInstance } from '@/db/supabase.client';
+import { z } from "zod";
+import type { APIRoute } from "astro";
+import { createSupabaseServerInstance } from "@/db/supabase.client";
 
 const resetPasswordSchema = z.object({
-  password: z.string().min(8, 'Hasło musi mieć minimum 8 znaków'),
+  password: z.string().min(8, "Hasło musi mieć minimum 8 znaków"),
 });
 
 export const prerender = false;
@@ -16,12 +16,12 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     if (!result.success) {
       return new Response(
         JSON.stringify({
-          error: 'Nieprawidłowe dane',
+          error: "Nieprawidłowe dane",
           details: result.error.issues,
         }),
         {
           status: 400,
-          headers: { 'Content-Type': 'application/json' },
+          headers: { "Content-Type": "application/json" },
         }
       );
     }
@@ -34,34 +34,34 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     });
 
     if (error) {
-      console.error('Error updating password:', error);
+      console.error("Error updating password:", error);
       return new Response(
         JSON.stringify({
-          error: error.message
+          error: error.message,
         }),
         {
-          status: error.status || 500
+          status: error.status || 500,
         }
       );
     }
 
     return new Response(
       JSON.stringify({
-        message: 'Hasło zostało pomyślnie zmienione.'
+        message: "Hasło zostało pomyślnie zmienione.",
       }),
       {
-        status: 200
+        status: 200,
       }
     );
   } catch (error) {
-    console.error('Unexpected error:', error);
+    console.error("Unexpected error:", error);
     return new Response(
       JSON.stringify({
-        error: 'Wystąpił nieoczekiwany błąd. Spróbuj ponownie później.'
+        error: "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później.",
       }),
       {
-        status: 500
+        status: 500,
       }
     );
   }
-}
+};

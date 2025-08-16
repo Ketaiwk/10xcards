@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const openRouterConfigSchema = z.object({
   apiKey: z.string().min(1),
@@ -22,17 +22,19 @@ export const flashcardResponseSchema = z.object({
 });
 
 export const messageSchema = z.object({
-  role: z.enum(['system', 'user', 'assistant']),
+  role: z.enum(["system", "user", "assistant"]),
   content: z.string(),
 });
 
 export const completionResponseSchema = z.object({
   id: z.string(),
-  choices: z.array(z.object({
-    message: z.object({
-      content: z.string(),
-    }),
-  })),
+  choices: z.array(
+    z.object({
+      message: z.object({
+        content: z.string(),
+      }),
+    })
+  ),
 });
 
 export const modelInfoSchema = z.object({

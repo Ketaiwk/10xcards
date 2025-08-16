@@ -1,25 +1,15 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@supabase/supabase-js";
 import { Input } from "@/components/ui/input";
-import {
-  Form,
-  FormSection,
-  FormGroup,
-  FormLabel,
-  FormDescription,
-  FormMessage,
-  FormActions,
-} from "@/components/ui/form";
+import { Form, FormSection, FormGroup, FormLabel, FormDescription, FormActions } from "@/components/ui/form";
 import { IconWrapper } from "@/components/common/IconWrapper";
 import { Mail, Lock } from "lucide-react";
 import { useNotifications } from "@/components/hooks/useNotifications";
-import { useNavigate } from "@/components/hooks/useNavigate";
 
 interface LoginResponse {
   error?: {
     message: string;
-    details?: Array<{ message: string }>;
+    details?: { message: string }[];
   };
   message?: string;
   user?: {
@@ -32,7 +22,6 @@ export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { showError, showSuccess } = useNotifications();
-  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

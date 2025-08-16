@@ -6,29 +6,17 @@ interface ShortcutHandlers {
   onDelete?: () => void;
 }
 
-export function useKeyboardShortcuts({
-  onSave,
-  onCancel,
-  onDelete,
-}: ShortcutHandlers) {
+export function useKeyboardShortcuts({ onSave, onCancel, onDelete }: ShortcutHandlers) {
   const handleKeyPress = useCallback(
     (event: KeyboardEvent) => {
       // Sprawdź, czy nie jesteśmy w polu tekstowym
       const target = event.target as HTMLElement;
-      if (
-        target.tagName === "INPUT" ||
-        target.tagName === "TEXTAREA" ||
-        target.isContentEditable
-      ) {
+      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable) {
         return;
       }
 
       // Ctrl/Cmd + S = Zapisz
-      if (
-        (event.ctrlKey || event.metaKey) &&
-        event.key === "s" &&
-        onSave
-      ) {
+      if ((event.ctrlKey || event.metaKey) && event.key === "s" && onSave) {
         event.preventDefault();
         onSave();
       }
@@ -40,11 +28,7 @@ export function useKeyboardShortcuts({
       }
 
       // Ctrl/Cmd + Delete = Usuń
-      if (
-        (event.ctrlKey || event.metaKey) &&
-        event.key === "Delete" &&
-        onDelete
-      ) {
+      if ((event.ctrlKey || event.metaKey) && event.key === "Delete" && onDelete) {
         event.preventDefault();
         onDelete();
       }

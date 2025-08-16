@@ -16,8 +16,6 @@ import { useNavigate } from "@/components/hooks/useNavigate";
 import { useNotifications } from "@/components/hooks/useNotifications";
 import { supabase } from "@/lib/supabase/client";
 
-interface ResetPasswordFormProps {}
-
 export function ResetPasswordForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

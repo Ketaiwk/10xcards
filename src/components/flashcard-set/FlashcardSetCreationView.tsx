@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "@/components/hooks/useNavigate";
 import { useNotifications } from "@/components/hooks/useNotifications";
-import type { CreateFlashcardSetCommand, FlashcardResponse, UpdateFlashcardCommand } from "@/types";
+import type { FlashcardResponse, UpdateFlashcardCommand } from "@/types";
 import { OpenRouterService } from "@/lib/services/openrouter/openrouter.service";
 import { SourceTextForm } from "./SourceTextForm";
 import { ProgressIndicator } from "./ProgressIndicator";
@@ -54,7 +54,7 @@ const useFlashcardSetCreation = () => {
     isDeleting: false,
   });
   const navigate = useNavigate();
-  const { showError, showSuccess, showInfo } = useNotifications();
+  const { showError, showSuccess } = useNotifications();
 
   const generateFlashcards = async (sourceText: string) => {
     if (!state.name.trim()) {
@@ -150,7 +150,8 @@ const useFlashcardSetCreation = () => {
     } catch (error) {
       setState((prev) => ({
         ...prev,
-        error: "Wystąpił błąd podczas aktualizacji fiszki",
+        error:
+          "Wystąpił błąd podczas aktualizacji fiszki: " + (error instanceof Error ? error.message : "Nieznany błąd"),
       }));
     }
   };
@@ -215,7 +216,8 @@ const useFlashcardSetCreation = () => {
     } catch (error) {
       setState((prev) => ({
         ...prev,
-        error: "Wystąpił błąd podczas zapisywania zestawu",
+        error:
+          "Wystąpił błąd podczas zapisywania zestawu: " + (error instanceof Error ? error.message : "Nieznany błąd"),
       }));
     } finally {
       setState((prev) => ({ ...prev, isSaving: false }));
@@ -233,7 +235,7 @@ const useFlashcardSetCreation = () => {
     } catch (error) {
       setState((prev) => ({
         ...prev,
-        error: "Wystąpił błąd podczas usuwania fiszek",
+        error: "Wystąpił błąd podczas usuwania fiszek: " + (error instanceof Error ? error.message : "Nieznany błąd"),
       }));
     } finally {
       setState((prev) => ({ ...prev, isDeleting: false }));

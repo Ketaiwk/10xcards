@@ -20,7 +20,7 @@ export function ForgotPasswordForm() {
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.resetPasswordForEmail(email);
+      const { error } = await supabase.auth.resetPasswordForEmail(email);
 
       if (error) {
         console.error("Error response:", error);
@@ -28,9 +28,14 @@ export function ForgotPasswordForm() {
       }
 
       setSuccess(true);
-    } catch (err: any) {
-      console.error("Error during password reset:", err);
-      setError(err.message || "Wystąpił błąd podczas wysyłania linku resetującego. Spróbuj ponownie.");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error("Error during password reset:", err);
+        setError(err.message || "Wystąpił błąd podczas wysyłania linku resetującego. Spróbuj ponownie.");
+      } else {
+        console.error("Error during password reset:", err);
+        setError("Wystąpił błąd podczas wysyłania linku resetującego. Spróbuj ponownie.");
+      }
     } finally {
       setIsLoading(false);
     }

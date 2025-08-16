@@ -1,5 +1,5 @@
-import { createClient } from '@supabase/supabase-js';
-import type { Database } from '@/db/database.types';
+import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@/db/database.types";
 
 // Singleton pattern dla klienta Supabase
 let supabaseInstance: ReturnType<typeof createClient<Database>> | null = null;

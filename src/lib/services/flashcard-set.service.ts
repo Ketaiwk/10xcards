@@ -1,3 +1,4 @@
+import type { FlashcardSetRow } from "../../types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type {
   FlashcardSetResponse,
@@ -104,7 +105,7 @@ export class FlashcardSetService {
     return this.mapToResponse(data);
   }
 
-  private mapToResponse(data: any): FlashcardSetResponse {
+  private mapToResponse(data: FlashcardSetRow): FlashcardSetResponse {
     return {
       id: data.id,
       name: data.name,

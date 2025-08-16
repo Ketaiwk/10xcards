@@ -1,7 +1,7 @@
 import type { Database } from "./db/database.types";
 
 // Base types from database
-type FlashcardSetRow = Database["public"]["Tables"]["flashcard_sets"]["Row"];
+export type FlashcardSetRow = Database["public"]["Tables"]["flashcard_sets"]["Row"];
 type FlashcardRow = Database["public"]["Tables"]["flashcards"]["Row"];
 
 /**
@@ -55,10 +55,10 @@ export interface LocalUser {
 }
 
 // Rozszerzenie Astro.locals
-declare module 'astro' {
+declare module "astro" {
   interface Locals {
-    user: import('@supabase/supabase-js').User | null;
-    supabase: import('@supabase/supabase-js').SupabaseClient<Database>;
+    user: import("@supabase/supabase-js").User | null;
+    supabase: import("@supabase/supabase-js").SupabaseClient<Database>;
   }
 }
 export type UpdateFlashcardSetCommand = Partial<Pick<FlashcardSetRow, "name" | "description" | "is_deleted">>;
@@ -83,7 +83,9 @@ export type FlashcardResponse = Pick<
   "id" | "set_id" | "question" | "answer" | "creation_type" | "created_at"
 >;
 
-export type UpdateFlashcardCommand = Partial<Pick<FlashcardRow, "question" | "answer" | "is_deleted" | "creation_type">>;
+export type UpdateFlashcardCommand = Partial<
+  Pick<FlashcardRow, "question" | "answer" | "is_deleted" | "creation_type">
+>;
 
 export type FlashcardListResponse = PaginatedResponse<FlashcardResponse>;
 

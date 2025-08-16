@@ -18,7 +18,7 @@ import { useNavigate } from "@/components/hooks/useNavigate";
 interface RegisterResponse {
   error?: {
     message: string;
-    details?: Array<{ message: string }>;
+    details?: { message: string }[];
   };
   message?: string;
   user?: {

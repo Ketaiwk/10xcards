@@ -12,7 +12,7 @@ const Form = React.forwardRef<HTMLFormElement, FormProps>(({ className, "data-te
     method: props.method || "POST",
   };
 
-  return <form ref={ref} className={cn("space-y-6", className)} role="form" data-test-id={testId} {...formProps} />;
+  return <form ref={ref} className={cn("space-y-6", className)} data-test-id={testId} {...formProps} />;
 });
 Form.displayName = "Form";
 

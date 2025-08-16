@@ -1,14 +1,9 @@
-import axios from 'axios';
-import type { Axios } from 'axios';
-import type { 
-  OpenRouterConfig, 
-  GenerateOptions, 
-  FlashcardResponse, 
-  ModelInfo
-} from './openrouter.types';
-import { OpenRouterError, OpenRouterErrorType } from './openrouter.types';
-import { validateConfig } from './openrouter.config';
-import { generateOptionsSchema, flashcardResponseSchema, modelInfoSchema } from './openrouter.schema';
+import axios from "axios";
+import type { Axios } from "axios";
+import type { OpenRouterConfig, GenerateOptions, FlashcardResponse, ModelInfo } from "./openrouter.types";
+import { OpenRouterError, OpenRouterErrorType } from "./openrouter.types";
+import { validateConfig } from "./openrouter.config";
+import { generateOptionsSchema, flashcardResponseSchema, modelInfoSchema } from "./openrouter.schema";
 
 export class OpenRouterService {
   private readonly config: OpenRouterConfig;
@@ -30,21 +25,18 @@ export class OpenRouterService {
       baseURL: this.config.baseURL,
       timeout: this.config.timeout,
       headers: {
-        'Authorization': `Bearer ${this.config.apiKey}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://10xcards.com',
-        'X-Title': '10xCards'
-      }
+        Authorization: `Bearer ${this.config.apiKey}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://10xcards.com",
+        "X-Title": "10xCards",
+      },
     });
 
     // Log config status
-    console.log('OpenRouter service initialized with API key:', !!this.config.apiKey);
+    console.log("OpenRouter service initialized with API key:", !!this.config.apiKey);
   }
 
-  public async generateFlashcard(
-    sourceText: string,
-    options: GenerateOptions = {}
-  ): Promise<FlashcardResponse> {
+  public async generateFlashcard(sourceText: string, options: GenerateOptions = {}): Promise<FlashcardResponse> {
     let result = null;
 
     try {
@@ -72,33 +64,30 @@ Przykład:
 }`;
 
       const messages = [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: sourceText }
+        { role: "system", content: systemPrompt },
+        { role: "user", content: sourceText },
       ];
 
-      console.log('Sending request to OpenRouter...');
-      
-      const response = await this.client.post('/chat/completions', {
+      console.log("Sending request to OpenRouter...");
+
+      const response = await this.client.post("/chat/completions", {
         model: this.currentModel,
         messages,
         temperature: 0.7,
         max_tokens: 1000,
         frequency_penalty: 0,
-        presence_penalty: 0
+        presence_penalty: 0,
       });
 
-      console.log('OpenRouter response:', response.data);
+      console.log("OpenRouter response:", response.data);
 
       if (!response.data.choices?.[0]?.message?.content) {
-        throw new Error('Invalid response format from OpenRouter');
+        throw new Error("Invalid response format from OpenRouter");
       }
 
-      result = flashcardResponseSchema.parse(
-        JSON.parse(response.data.choices[0].message.content)
-      );
-      
+      result = flashcardResponseSchema.parse(JSON.parse(response.data.choices[0].message.content));
     } catch (error) {
-      console.error('OpenRouter error:', error);
+      console.error("OpenRouter error:", error);
       if (error instanceof Error) {
         throw new OpenRouterError(
           OpenRouterErrorType.API_ERROR,
@@ -108,31 +97,30 @@ Przykład:
       }
       throw error;
     } finally {
-      console.log('Generation attempt completed, result:', !!result);
+      console.log("Generation attempt completed, result:", !!result);
     }
 
-    return result!;
+    if (!result) {
+      throw new OpenRouterError(OpenRouterErrorType.API_ERROR, "No flashcard generated", null);
+    }
+    return result;
   }
 
   public async getAvailableModels(): Promise<ModelInfo[]> {
     try {
-      const response = await this.client.get('/models');
+      const response = await this.client.get("/models");
       return response.data.data.map((model: unknown) => modelInfoSchema.parse(model));
     } catch (error) {
       if (error instanceof Error) {
-        throw new OpenRouterError(
-          OpenRouterErrorType.API_ERROR,
-          `Failed to fetch models: ${error.message}`,
-          error
-        );
+        throw new OpenRouterError(OpenRouterErrorType.API_ERROR, `Failed to fetch models: ${error.message}`, error);
       }
       throw error;
     }
   }
 
   public setModel(modelName: string): void {
-    if (!modelName || typeof modelName !== 'string') {
-      throw new Error('Invalid model name');
+    if (!modelName || typeof modelName !== "string") {
+      throw new Error("Invalid model name");
     }
     this.currentModel = modelName;
   }

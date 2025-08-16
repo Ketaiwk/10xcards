@@ -1,5 +1,3 @@
-import { z } from 'zod';
-
 export interface OpenRouterConfig {
   apiKey: string;
   defaultModel: string;
@@ -15,12 +13,12 @@ export interface GenerateOptions {
 }
 
 export interface ResponseFormat {
-  type: 'json_schema';
+  type: "json_schema";
   json_schema: {
     name: string;
     strict: boolean;
     schema: {
-      type: 'object';
+      type: "object";
       properties: Record<string, unknown>;
       required: string[];
     };
@@ -44,12 +42,12 @@ export interface ModelInfo {
 }
 
 export enum OpenRouterErrorType {
-  AUTH_ERROR = 'auth_error',
-  RATE_LIMIT = 'rate_limit',
-  VALIDATION_ERROR = 'validation_error',
-  NETWORK_ERROR = 'network_error',
-  API_ERROR = 'api_error',
-  MODEL_ERROR = 'model_error',
+  AUTH_ERROR = "auth_error",
+  RATE_LIMIT = "rate_limit",
+  VALIDATION_ERROR = "validation_error",
+  NETWORK_ERROR = "network_error",
+  API_ERROR = "api_error",
+  MODEL_ERROR = "model_error",
 }
 
 export class OpenRouterError extends Error {
@@ -59,6 +57,6 @@ export class OpenRouterError extends Error {
     public cause?: unknown
   ) {
     super(message);
-    this.name = 'OpenRouterError';
+    this.name = "OpenRouterError";
   }
 }

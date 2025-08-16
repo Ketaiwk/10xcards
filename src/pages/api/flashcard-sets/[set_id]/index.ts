@@ -33,7 +33,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
     });
   } catch (err) {
     const error = err as CustomError;
-    
+
     if (error.message === "Flashcard set not found") {
       return new Response(JSON.stringify({ error: error.message }), {
         status: 404,

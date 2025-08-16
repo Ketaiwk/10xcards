@@ -1,6 +1,6 @@
-import { test, expect } from '../page-objects';
+import { test, expect } from "../page-objects";
 
-test.describe('Login Flow', () => {
+test.describe("Login Flow", () => {
   /*test('użytkownik może się zalogować z poprawnymi danymi', async ({ navigationBar, loginPage, page }) => {
     // Arrange
     await page.goto('/');
@@ -109,42 +109,49 @@ test.describe('Login Flow', () => {
     expect(userEmail).toBe('test@example.com');
   });*/
 
-  test('wyświetla błąd przy niepoprawnych danych logowania', async ({ navigationBar, loginPage }) => {
+  test("wyświetla błąd przy niepoprawnych danych logowania", async ({ navigationBar, loginPage }) => {
     // Arrange
-    await navigationBar.page.goto('/');
-    await navigationBar.page.waitForLoadState('networkidle');
-    
+    await navigationBar.page.goto("/");
+    await navigationBar.page.waitForLoadState("networkidle");
+
     // Act
     await navigationBar.clickLogin();
-    
+
     // Czekamy na załadowanie formularza
     await expect(loginPage.form).toBeVisible({ timeout: 30000 });
-    
+
     // Próbujemy zalogować się nieprawidłowymi danymi
-    await loginPage.login('niepoprawny@email.com', 'zle_haslo');
-    
+    await loginPage.login("niepoprawny@email.com", "zle_haslo");
+
     // Czekamy na pojawienie się komunikatu o błędzie
     const errorMessage = await loginPage.getErrorMessage();
     expect(errorMessage).toBeTruthy();
-    expect(errorMessage).toContain('Nieprawidłowy email lub hasło');
+    expect(errorMessage).toContain("Nieprawidłowy email lub hasło");
   });
 
-  test('przekierowuje na stronę logowania po kliknięciu przycisku zaloguj', async ({ navigationBar, page, loginPage }) => {
+  test("przekierowuje na stronę logowania po kliknięciu przycisku zaloguj", async ({
+    navigationBar,
+    page,
+    loginPage,
+  }) => {
     // Arrange
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
-    
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+
     // Act
     await navigationBar.clickLogin();
-    
+
     // Nawigacja powinna się zakończyć w clickLogin
-    await page.waitForLoadState('networkidle');
-    
+    await page.waitForLoadState("networkidle");
+
     // Czekamy na zainicjalizowanie komponentów React
-    await page.waitForFunction(() => {
-      const islands = document.querySelectorAll('astro-island');
-      return Array.from(islands).every(island => !island.hasAttribute('ssr'));
-    }, { timeout: 10000 });
+    await page.waitForFunction(
+      () => {
+        const islands = document.querySelectorAll("astro-island");
+        return Array.from(islands).every((island) => !island.hasAttribute("ssr"));
+      },
+      { timeout: 10000 }
+    );
 
     // Czekamy na formularz
     await expect(loginPage.form).toBeVisible({ timeout: 15000 });

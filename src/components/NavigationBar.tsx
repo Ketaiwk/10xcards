@@ -3,7 +3,6 @@ import { LogOut, User } from "lucide-react";
 import { useEffect } from "react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown";
 import { getSupabaseClient } from "@/lib/supabase/client";
-import type { AuthError, Session, User as SupabaseUser } from '@supabase/supabase-js';
 
 interface NavigationBarProps {
   user:
@@ -15,41 +14,42 @@ interface NavigationBarProps {
 }
 
 export function NavigationBar({ user }: NavigationBarProps) {
-
   useEffect(() => {
     let authListener: { unsubscribe: () => void } | null = null;
     let mounted = true;
 
     const setupAuthListener = async () => {
       const supabaseClient = getSupabaseClient();
-      
+
       // Ustawiamy event listener na zmiany w sesji
-      const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(
-        (event, session) => {
-          if (!mounted) return;
-          
-          // Aktualizujemy atrybuty nawigacji
-          const nav = document.querySelector('[data-testid="navigation-bar"]');
-          if (nav) {
-            nav.setAttribute('data-hydrated', 'true');
-            nav.setAttribute('data-user-loaded', session?.user ? 'true' : 'false');
-            nav.setAttribute('data-auth-state', event);
-          }
-        }
-      );
-      authListener = subscription;
-      
-      // Sprawdzamy początkowy stan sesji
-      try {
-        const { data: { session } } = await supabaseClient.auth.getSession();
+      const {
+        data: { subscription },
+      } = supabaseClient.auth.onAuthStateChange((event, session) => {
         if (!mounted) return;
-        
+
+        // Aktualizujemy atrybuty nawigacji
         const nav = document.querySelector('[data-testid="navigation-bar"]');
         if (nav) {
-          nav.setAttribute('data-hydrated', 'true');
-          nav.setAttribute('data-user-loaded', session?.user ? 'true' : 'false');
-          nav.setAttribute('data-initial-check', 'true');
-          nav.setAttribute('data-auth-state', session ? 'SIGNED_IN' : 'SIGNED_OUT');
+          nav.setAttribute("data-hydrated", "true");
+          nav.setAttribute("data-user-loaded", session?.user ? "true" : "false");
+          nav.setAttribute("data-auth-state", event);
+        }
+      });
+      authListener = subscription;
+
+      // Sprawdzamy początkowy stan sesji
+      try {
+        const {
+          data: { session },
+        } = await supabaseClient.auth.getSession();
+        if (!mounted) return;
+
+        const nav = document.querySelector('[data-testid="navigation-bar"]');
+        if (nav) {
+          nav.setAttribute("data-hydrated", "true");
+          nav.setAttribute("data-user-loaded", session?.user ? "true" : "false");
+          nav.setAttribute("data-initial-check", "true");
+          nav.setAttribute("data-auth-state", session ? "SIGNED_IN" : "SIGNED_OUT");
         }
       } catch (error) {
         console.error("NavigationBar session check error:", error);
@@ -99,11 +99,7 @@ export function NavigationBar({ user }: NavigationBarProps) {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="relative h-10 w-10 rounded-full"
-                  data-testid="user-menu-trigger"
-                >
+                <Button variant="ghost" className="relative h-10 w-10 rounded-full" data-testid="user-menu-trigger">
                   <User className="h-5 w-5" />
                   <span className="sr-only">Menu użytkownika</span>
                 </Button>

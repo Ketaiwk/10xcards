@@ -27,7 +27,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
       return new Response(
         JSON.stringify({
           error: "Validation error",
-          details: typeof error === "object" && error !== null && "errors" in error ? (error as any).errors : [],
         }),
         {
           status: 400,
@@ -36,6 +35,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       );
     }
 
+    // eslint-disable-next-line no-console
     console.error("Error creating flashcard set:", error);
     return new Response(
       JSON.stringify({
@@ -70,24 +70,20 @@ export const GET: APIRoute = async ({ request, locals }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-  if (
-    error &&
-    typeof error === "object" &&
-    "name" in error &&
-    (error as { name?: string }).name === "ZodError"
-  ) {
-    return new Response(
-      JSON.stringify({
-        error: "Validation error",
-        details: "errors" in error ? (error as any).errors : [],
-      }),
-      {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-  }
+    if (error && typeof error === "object" && "name" in error && (error as { name?: string }).name === "ZodError") {
+      return new Response(
+        JSON.stringify({
+          error: "Validation error",
+          details: error instanceof ZodError ? error.errors : [],
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
 
+    // eslint-disable-next-line no-console
     console.error("Error listing flashcard sets:", error);
     return new Response(
       JSON.stringify({

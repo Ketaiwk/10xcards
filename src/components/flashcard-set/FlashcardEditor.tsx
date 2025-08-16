@@ -1,6 +1,5 @@
 import type { FlashcardViewModel } from "./FlashcardSetCreationView";
 import type { UpdateFlashcardCommand } from "@/types";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";

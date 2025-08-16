@@ -1,8 +1,8 @@
-import { cleanup } from '@testing-library/react';
-import { afterEach, vi, expect } from 'vitest';
-import * as matchers from '@testing-library/jest-dom/matchers';
+import { cleanup } from "@testing-library/react";
+import { afterEach, vi, expect } from "vitest";
+import * as matchers from "@testing-library/jest-dom/matchers";
 
-expect.extend(matchers as any);
+expect.extend(matchers);
 
 // Automatyczne czyszczenie po każdym teście
 afterEach(() => {
@@ -28,9 +28,7 @@ global.localStorage = localStorageMock;
 class MockIntersectionObserver implements IntersectionObserver {
   readonly root: Element | Document | null = null;
   readonly rootMargin: string = "";
-  readonly thresholds: ReadonlyArray<number> = [];
-
-  constructor(_callback: IntersectionObserverCallback) {}
+  readonly thresholds: readonly number[] = [];
 
   observe = vi.fn();
   unobserve = vi.fn();
