@@ -1,8 +1,73 @@
 ---
-import Welcome from "../components/Welcome.astro";
 import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="10xCards">
-  <Welcome />
-</Layout>
+  <main class="min-h-screen bg-gray-50 p-8">
+    <div class="mx-auto max-w-3xl space-y-10 rounded-2xl shadow-2xl bg-white p-8 text-gray-900 border border-gray-200">
+      <header class="text-center space-y-4">
+        <h1 class="text-5xl font-bold text-navy-700">Witaj w 10xCards!</h1>
+        <p class="text-xl text-gray-700">Aplikacja do automatycznego generowania fiszek edukacyjnych z pomocą AI.</p>
+      </header>
+      <section class="space-y-6">
+        <h2 class="text-2xl font-semibold text-navy-700">Dlaczego 10xCards?</h2>
+        <ul class="list-disc pl-6 space-y-2 text-gray-700">
+          <li>Automatyczne generowanie fiszek na podstawie tekstu (kopiuj-wklej)</li>
+          <li>Manualne tworzenie, edycja i usuwanie fiszek</li>
+          <li>Prosty system kont użytkowników do przechowywania fiszek</li>
+          <li>Integracja z gotowym algorytmem powtórek (spaced repetition)</li>
+          <li>Walidacja liczby znaków: pytanie max 200, odpowiedź max 500</li>
+        </ul>
+      </section>
+      <section class="text-center space-y-4">
+        <a
+          href="/auth/login"
+          class="inline-block mt-6 bg-blue-600 hover:bg-blue-700 text-white text-xl font-semibold py-4 px-10 rounded-xl shadow-lg border border-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 text-center"
+        >
+          Zaloguj się, aby zacząć
+        </a>
+      </section>
+
+      <section class="space-y-6">
+        <h2 class="text-2xl font-semibold text-navy-700">Jak zacząć?</h2>
+        <ol class="list-decimal pl-6 space-y-2 text-gray-700">
+          <li>Zarejestruj się lub zaloguj, aby tworzyć i zapisywać zestawy fiszek.</li>
+          <li>Wklej tekst, z którego chcesz wygenerować fiszki lub dodaj je ręcznie.</li>
+          <li>Edytuj, przeglądaj i usuwaj fiszki w wygodnym interfejsie.</li>
+        </ol>
+      </section>
+
+      <section class="space-y-6">
+        <h2 class="text-2xl font-semibold text-navy-700">Stack technologiczny</h2>
+        <div class="grid gap-4 md:grid-cols-2">
+          <div class="rounded-xl bg-gray-50 p-4 border border-gray-200">
+            <h3 class="font-semibold mb-2 text-navy-700">Frontend</h3>
+            <ul class="space-y-1 text-gray-700">
+              <li>Astro 5</li>
+              <li>React 19</li>
+              <li>TypeScript 5</li>
+              <li>Tailwind CSS 4</li>
+              <li>Shadcn/ui</li>
+            </ul>
+          </div>
+          <div class="rounded-xl bg-gray-50 p-4 border border-gray-200">
+            <h3 class="font-semibold mb-2 text-navy-700">Backend & AI</h3>
+            <ul class="space-y-1 text-gray-700">
+              <li>Supabase</li>
+              <li>Openrouter.ai</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      <section class="space-y-4">
+        <h2 class="text-xl font-semibold text-navy-700">Bezpieczeństwo i dostęp</h2>
+        <p class="text-gray-700">
+          Korzystanie z fiszek i zestawów wymaga zalogowania. Twoje dane są bezpieczne dzięki Supabase.
+        </p>
+      </section>
+      <footer class="pt-8 text-center text-gray-400 text-sm">
+        &copy; 2025 10xCards. Stworzone z wykorzystaniem Astro, React, Supabase i AI.
+      </footer>
+    </div>
+  </main>
+</Layout>; ---
