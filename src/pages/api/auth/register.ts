@@ -65,12 +65,10 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     if (!authData.user?.id || !authData.user?.email) {
       console.error("Brak user.id lub user.email po rejestracji:", authData);
     } else {
-      const { error: dbError } = await supabase
-        .from("users")
-        .insert({
-          id: authData.user.id,
-          email: authData.user.email,
-        });
+      const { error: dbError } = await supabase.from("users").insert({
+        id: authData.user.id,
+        email: authData.user.email,
+      });
       if (dbError) {
         console.error("Błąd dodawania użytkownika do tabeli users:", dbError);
         return new Response(
