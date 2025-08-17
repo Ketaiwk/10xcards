@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { FlashcardSetService } from "@/lib/services/flashcard-set.service";
 import { createFlashcardSetSchema, listFlashcardSetsSchema } from "@/lib/schemas/flashcard-set.schema";
-import { ZodError } from "astro/zod";
+import { ZodError } from "zod";
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
