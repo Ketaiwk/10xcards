@@ -61,6 +61,33 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       );
     }
 
+    // Dodanie użytkownika do tabeli users
+    if (!authData.user?.id || !authData.user?.email) {
+      console.error("Brak user.id lub user.email po rejestracji:", authData);
+    } else {
+      const { error: dbError } = await supabase
+        .from("users")
+        .insert({
+          id: authData.user.id,
+          email: authData.user.email,
+        });
+      if (dbError) {
+        console.error("Błąd dodawania użytkownika do tabeli users:", dbError);
+        return new Response(
+          JSON.stringify({
+            error: "Błąd dodawania użytkownika do bazy danych",
+            details: dbError.message,
+          }),
+          {
+            status: 500,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      } else {
+        console.log("Użytkownik dodany do tabeli users:", authData.user.id);
+      }
+    }
+
     // Pomyślna rejestracja
     return new Response(
       JSON.stringify({
