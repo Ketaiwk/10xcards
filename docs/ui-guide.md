@@ -2,7 +2,7 @@
 Architektura widoków:
 
 /auth/\* dla logowania/rejestracji
-/ dla dashboardu z zestawami
+/sets dla dashboardu z zestawami
 /sets/new dla tworzenia zestawu
 /sets/[id] dla widoku zestawu
 /sets/[id]/edit dla edycji zestawu

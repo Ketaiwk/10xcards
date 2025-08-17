@@ -70,7 +70,7 @@ const useFlashcardSetCreation = () => {
     }));
 
     const openRouter = new OpenRouterService();
-    const maxCards = 30;
+    const maxCards = 5;
 
     try {
       await openRouter.generateFlashcards(sourceText, maxCards, {}, (progress, newCard) => {
