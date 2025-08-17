@@ -51,8 +51,7 @@ export function LoginForm() {
       showSuccess("Zalogowano pomyślnie!");
 
       // Przekierowanie na stronę główną lub returnUrl jeśli istnieje
-      const returnUrl = new URLSearchParams(window.location.search).get("returnUrl");
-      navigate(returnUrl || "/");
+      navigate("/sets");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Wystąpił nieoczekiwany błąd";
       setError(message);

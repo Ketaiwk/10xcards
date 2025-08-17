@@ -13,16 +13,11 @@ export function useDashboardSets(): UseDashboardSetsResult {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  console.log("elo elo w useDashboardSets.ts 1");
-
   const fetchSets = async () => {
     setLoading(true);
     setError(null);
-    console.log("elo elo w useDashboardSets.ts");
     try {
       const res = await fetch("/api/flashcard-sets");
-      console.log("Fetching flashcard sets from API-----------------------------------------");
-      console.log(res);
       if (!res.ok) {
         throw new Error(`API error: ${res.status}`);
       }

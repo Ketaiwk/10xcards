@@ -69,8 +69,8 @@ export function RegisterForm() {
 
       showSuccess(data.message || "Rejestracja zakończona pomyślnie. Sprawdź swoją skrzynkę email.");
 
-      // Przekierowanie na stronę logowania po pomyślnej rejestracji
-      navigate("/auth/login");
+      // Przekierowanie na stronę zestawów po pomyślnej rejestracji
+      navigate("/sets");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Wystąpił nieoczekiwany błąd";
       setError(message);

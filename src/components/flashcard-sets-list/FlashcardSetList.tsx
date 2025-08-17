@@ -16,5 +16,4 @@ const FlashcardSetList: React.FC<Props> = ({ sets }) => {
   );
 };
 
-// PRZENIESIONY: flashcard-sets-list/FlashcardSetList.tsx
 export default FlashcardSetList;
