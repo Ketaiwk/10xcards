@@ -64,16 +64,13 @@ export function RegisterForm() {
       const data: RegisterResponse = await response.json();
 
       if (!response.ok) {
-        const errorMessage = data.message || data.error?.message || "Wystąpił błąd podczas rejestracji";
-        throw new Error(errorMessage);
+        throw new Error(data.error?.message || "Wystąpił błąd podczas rejestracji");
       }
 
-      showSuccess(
-        data.message || "Rejestracja zakończona pomyślnie. Sprawdź swoją skrzynkę email aby potwierdzić konto."
-      );
+      showSuccess(data.message || "Rejestracja zakończona pomyślnie. Sprawdź swoją skrzynkę email.");
 
       // Przekierowanie na stronę logowania po pomyślnej rejestracji
-      navigate("/auth/login?message=verify-email");
+      navigate("/auth/login");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Wystąpił nieoczekiwany błąd";
       setError(message);

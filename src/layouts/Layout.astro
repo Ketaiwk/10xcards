@@ -1,6 +1,5 @@
 ---
 import "../styles/global.css";
-import AuthInitializer from "../components/AuthInitializer.astro";
 import { NavigationBar } from "@/components/NavigationBar";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -22,11 +21,10 @@ const user =
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
-    <AuthInitializer />
   </head>
   <body>
     <div class="min-h-screen flex flex-col">
-      <NavigationBar client:only="react" user={user} />
+      <NavigationBar client:load user={user} />
       <main class="flex-1">
         <slot />
       </main>

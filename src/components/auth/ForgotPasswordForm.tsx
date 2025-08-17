@@ -4,9 +4,12 @@ import { Input } from "@/components/ui/input";
 import { Form, FormSection, FormGroup, FormLabel, FormDescription, FormActions } from "@/components/ui/form";
 import { IconWrapper } from "@/components/common/IconWrapper";
 import { Mail } from "lucide-react";
-import { supabase } from "@/lib/supabase/client";
 
-export function ForgotPasswordForm() {
+interface ForgotPasswordFormProps {
+  onSubmit?: (email: string) => Promise<void>;
+}
+
+export function ForgotPasswordForm({ onSubmit }: ForgotPasswordFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -20,22 +23,12 @@ export function ForgotPasswordForm() {
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email);
-
-      if (error) {
-        console.error("Error response:", error);
-        throw new Error(error.message || "Wystąpił nieoczekiwany błąd");
-      }
-
+      await onSubmit?.(email);
       setSuccess(true);
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        console.error("Error during password reset:", err);
-        setError(err.message || "Wystąpił błąd podczas wysyłania linku resetującego. Spróbuj ponownie.");
-      } else {
-        console.error("Error during password reset:", err);
-        setError("Wystąpił błąd podczas wysyłania linku resetującego. Spróbuj ponownie.");
-      }
+    } catch (err) {
+      setError(
+        "Wystąpił błąd podczas wysyłania linku resetującego: " + (err instanceof Error ? err.message : "Nieznany błąd")
+      );
     } finally {
       setIsLoading(false);
     }

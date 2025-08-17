@@ -1,19 +1,10 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-interface FormProps extends React.FormHTMLAttributes<HTMLFormElement> {
-  "data-test-id"?: string;
-}
-
-const Form = React.forwardRef<HTMLFormElement, FormProps>(({ className, "data-test-id": testId, ...props }, ref) => {
-  // Upewniamy się, że method jest ustawione na POST
-  const formProps = {
-    ...props,
-    method: props.method || "POST",
-  };
-
-  return <form ref={ref} className={cn("space-y-6", className)} data-test-id={testId} {...formProps} />;
-});
+const Form = React.forwardRef<HTMLFormElement, React.FormHTMLAttributes<HTMLFormElement>>(
+  // eslint-disable-next-line react/prop-types
+  ({ className, ...props }, ref) => <form ref={ref} className={cn("space-y-6", className)} {...props} />
+);
 Form.displayName = "Form";
 
 const FormSection = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(

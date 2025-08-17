@@ -4,7 +4,6 @@ interface Props {
   onCreateSet: () => void;
 }
 
-
 import { useNavigate } from "@/components/hooks/useNavigate";
 
 const EmptyState: React.FC<Props> = () => {

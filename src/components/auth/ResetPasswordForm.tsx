@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -12,46 +12,17 @@ import {
 } from "@/components/ui/form";
 import { IconWrapper } from "@/components/common/IconWrapper";
 import { Lock } from "lucide-react";
-import { useNavigate } from "@/components/hooks/useNavigate";
-import { useNotifications } from "@/components/hooks/useNotifications";
-import { supabase } from "@/lib/supabase/client";
 
-export function ResetPasswordForm() {
+interface ResetPasswordFormProps {
+  onSubmit?: (password: string) => Promise<void>;
+}
+
+export function ResetPasswordForm({ onSubmit }: ResetPasswordFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState<string | null>(null);
-  const navigate = useNavigate();
-  const { showSuccess, showError } = useNotifications();
-
-  useEffect(() => {
-    async function checkSession() {
-      try {
-        // Sprawdź czy strona została załadowana po weryfikacji
-        const isVerified = new URLSearchParams(window.location.search).get("verified") === "true";
-        if (!isVerified) {
-          throw new Error("Nieprawidłowy dostęp do strony resetowania hasła");
-        }
-
-        const {
-          data: { session },
-          error,
-        } = await supabase.auth.getSession();
-
-        if (error) throw error;
-        if (!session) {
-          throw new Error("Brak aktywnej sesji resetowania hasła");
-        }
-      } catch (err) {
-        const message = err instanceof Error ? err.message : "Wystąpił błąd podczas weryfikacji sesji";
-        showError(message);
-        navigate("/auth/login");
-      }
-    }
-
-    checkSession();
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -66,30 +37,9 @@ export function ResetPasswordForm() {
     setIsLoading(true);
 
     try {
-      const {
-        data: { user },
-        error: sessionError,
-      } = await supabase.auth.getUser();
-
-      if (sessionError || !user) {
-        throw new Error("Sesja wygasła. Spróbuj zresetować hasło ponownie.");
-      }
-
-      const { error } = await supabase.auth.updateUser({
-        password: password,
-      });
-
-      if (error) throw error;
-
-      // Wyloguj użytkownika po zmianie hasła
-      await supabase.auth.signOut();
-
-      showSuccess("Hasło zostało pomyślnie zmienione. Możesz się teraz zalogować.");
-      navigate("/auth/login");
+      await onSubmit?.(password);
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Wystąpił błąd podczas resetowania hasła";
-      setError(message);
-      showError(message);
+      setError("Wystąpił błąd podczas resetowania hasła: " + (err instanceof Error ? err.message : "Nieznany błąd"));
     } finally {
       setIsLoading(false);
     }

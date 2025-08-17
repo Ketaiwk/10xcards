@@ -23,8 +23,12 @@ export function useDashboardSets(): UseDashboardSetsResult {
       }
       const data: FlashcardSetListResponse = await res.json();
       setSets(data.items);
-    } catch (err: any) {
-      setError(err.message || "Nie udało się pobrać zestawów.");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || "Nie udało się pobrać zestawów.");
+      } else {
+        setError("Nie udało się pobrać zestawów.");
+      }
     } finally {
       setLoading(false);
     }

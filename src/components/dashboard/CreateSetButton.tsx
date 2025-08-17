@@ -5,9 +5,6 @@ interface Props {
   onCreate: () => void;
 }
 
-
-
-
 const CreateSetButton: React.FC<Props> = () => {
   const navigate = useNavigate();
   return (

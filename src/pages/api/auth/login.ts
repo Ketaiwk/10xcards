@@ -55,87 +55,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       );
     }
 
-    // Jeśli nie ma sesji lub użytkownika, zgłaszamy błąd
-    if (!authData?.session || !authData?.user) {
-      return new Response(
-        JSON.stringify({
-          error: "Brak danych sesji",
-          message: "Wystąpił nieoczekiwany błąd podczas logowania",
-        }),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
-
-    // Pobieramy ciasteczka z Supabase
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    if (!session) {
-      return new Response(
-        JSON.stringify({
-          error: "Brak sesji",
-          message: "Wystąpił błąd podczas tworzenia sesji",
-        }),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
-
-    // Ustawiamy sesję po stronie serwera
-    const { error: setSessionError } = await supabase.auth.setSession({
-      access_token: authData.session.access_token,
-      refresh_token: authData.session.refresh_token,
-    });
-
-    if (setSessionError) {
-      return new Response(
-        JSON.stringify({
-          error: "Błąd sesji",
-          message: "Nie udało się ustawić sesji",
-        }),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
-
-    // Pobieramy ciasteczka sesji z Supabase
-    const {
-      data: { session: newSession },
-      error: sessionError,
-    } = await supabase.auth.getSession();
-    if (sessionError) {
-      return new Response(
-        JSON.stringify({
-          error: "Błąd sesji",
-          message: "Nie udało się utworzyć sesji",
-        }),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
-
-    // Ustawiamy ciasteczka sesji
-    const sessionCookie = newSession?.access_token;
-    if (sessionCookie) {
-      cookies.set("sb-access-token", sessionCookie, {
-        path: "/",
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 60 * 60 * 24 * 7, // 7 dni
-      });
-    }
-
-    // Zwracamy pomyślną odpowiedź
+    // Pomyślne logowanie
     return new Response(
       JSON.stringify({
         user: {
@@ -145,13 +65,10 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       }),
       {
         status: 200,
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
       }
     );
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.error("Błąd podczas logowania:", error);
 
     return new Response(

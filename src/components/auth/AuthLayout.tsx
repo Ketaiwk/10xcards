@@ -10,7 +10,7 @@ interface AuthLayoutProps extends PropsWithChildren {
 
 export function AuthLayout({ title, description, children }: AuthLayoutProps) {
   return (
-    <main className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4" data-test-id="auth-layout">
+    <main className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center space-y-2">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">

@@ -29,38 +29,31 @@ const PROTECTED_PATHS = [
 export const onRequest = defineMiddleware(async (context, next) => {
   const { locals, cookies, request, url, redirect } = context;
 
-  try {
-    // Inicjalizacja klienta Supabase
-    const supabase = createSupabaseServerInstance({
-      cookies,
-      headers: new Headers(request.headers),
-    });
+  // Inicjalizacja klienta Supabase
+  const supabase = createSupabaseServerInstance({
+    cookies,
+    headers: new Headers(request.headers),
+  });
 
-    // Dodanie instancji Supabase do locals
-    locals.supabase = supabase;
+  // Dodanie instancji Supabase do locals
+  locals.supabase = supabase;
 
-    // Pobierz sesję
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+  // Pobranie informacji o użytkowniku
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
 
-    if (session?.user) {
-      // Jeśli mamy sesję, ustaw użytkownika
-      locals.user = session.user;
-    } else {
-      // Jeśli nie ma sesji, ustaw undefined
-      locals.user = undefined;
-    }
-  } catch (error) {
-    console.error("Auth middleware - unexpected error:", error);
-    locals.user = undefined;
+  // Aktualizacja locals z informacjami o użytkowniku
+  if (user && !error) {
+    locals.user = user;
   }
 
   // Sprawdzenie czy ścieżka wymaga autoryzacji
   const requiresAuth = PROTECTED_PATHS.some((path) => url.pathname.startsWith(path));
 
   // Przekierowanie niezalogowanych użytkowników do strony logowania
-  if (requiresAuth && !locals.user) {
+  if (requiresAuth && !user) {
     // Zachowanie oryginalnej ścieżki w returnUrl dla przekierowania po logowaniu
     const loginUrl = new URL("/auth/login", url.origin);
     loginUrl.searchParams.set("returnUrl", url.pathname + url.search);
@@ -71,7 +64,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // Przekierowanie zalogowanych użytkowników ze stron auth do głównej
   const isAuthPath = PUBLIC_PATHS.some((path) => path.startsWith("/auth/") && url.pathname === path);
 
-  if (isAuthPath && locals.user) {
+  if (isAuthPath && user) {
     return redirect("/");
   }
 
