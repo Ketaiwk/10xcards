@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { FlashcardList } from "../FlashcardList";
+import FlashcardList from "../FlashcardList";
 import type { FlashcardViewModel } from "../FlashcardSetCreationView";
 
 describe("FlashcardList", () => {
@@ -36,13 +36,15 @@ describe("FlashcardList", () => {
   });
 
   // Renderowanie komponentu z podstawowymi propsami
+  const mockOnAccept = vi.fn();
   const setupList = (flashcards = mockFlashcards) => {
     return render(
       <FlashcardList
-        flashcards={flashcards}
+        items={flashcards}
         onEdit={mockOnEdit}
         onDelete={mockOnDelete}
         onEditStateChange={mockOnEditStateChange}
+        onAccept={mockOnAccept}
       />
     );
   };
@@ -55,8 +57,8 @@ describe("FlashcardList", () => {
       // Assert
       expect(screen.getByText("Pytanie 1")).toBeInTheDocument();
       expect(screen.getByText("Odpowiedź 1")).toBeInTheDocument();
-      expect(screen.getByText("Pytanie 2")).toBeInTheDocument();
-      expect(screen.getByText("Odpowiedź 2")).toBeInTheDocument();
+      expect(screen.getByDisplayValue("Pytanie 2")).toBeInTheDocument();
+      expect(screen.getByDisplayValue("Odpowiedź 2")).toBeInTheDocument();
     });
 
     it("powinien wyświetlić komunikat gdy nie ma fiszek", () => {
@@ -64,7 +66,7 @@ describe("FlashcardList", () => {
       setupList([]);
 
       // Assert
-      expect(screen.getByText("Brak fiszek do wyświetlenia")).toBeInTheDocument();
+      expect(screen.getByText("Brak fiszek w tym zestawie.")).toBeInTheDocument();
     });
 
     it("powinien wyświetlić edytor dla fiszki w trybie edycji", () => {

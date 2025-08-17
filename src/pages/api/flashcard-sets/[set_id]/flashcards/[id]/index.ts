@@ -1,3 +1,73 @@
+/**
+ * DELETE /api/flashcard-sets/{set_id}/flashcards/{id}
+ * Usuwa fiszkę z zestawu
+ */
+export const DELETE: APIRoute = async ({ params, locals }) => {
+  try {
+    // Get authenticated user
+    const user = locals.user;
+    if (!user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Validate set_id parameter
+    const setParamValidation = setIdParamSchema.safeParse({ set_id: params.set_id });
+    if (!setParamValidation.success) {
+      return new Response(
+        JSON.stringify({
+          error: "Invalid set ID",
+          details: setParamValidation.error.issues,
+        }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate flashcard id parameter
+    const flashcardParamValidation = flashcardIdParamSchema.safeParse({ id: params.id });
+    if (!flashcardParamValidation.success) {
+      return new Response(
+        JSON.stringify({
+          error: "Invalid flashcard ID",
+          details: flashcardParamValidation.error.issues,
+        }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    const { set_id } = setParamValidation.data;
+    const { id: flashcardId } = flashcardParamValidation.data;
+
+    // Usuń fiszkę za pomocą serwisu
+    const flashcardService = new FlashcardService(locals.supabase);
+    await flashcardService.delete(user.id, set_id, flashcardId);
+
+    return new Response(null, { status: 204 });
+  } catch (error) {
+    console.error("Error deleting flashcard:", error);
+
+    if (error instanceof Error) {
+      if (error.message.includes("Flashcard set not found") || error.message.includes("access denied")) {
+        return new Response(JSON.stringify({ error: "Flashcard set not found" }), {
+          status: 404,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+      if (error.message.includes("Flashcard not found")) {
+        return new Response(JSON.stringify({ error: "Flashcard not found" }), {
+          status: 404,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+    }
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+};
 import type { APIRoute } from "astro";
 import { FlashcardService } from "../../../../../../lib/services/flashcard.service.js";
 import {

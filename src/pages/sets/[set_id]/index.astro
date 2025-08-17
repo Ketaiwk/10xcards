@@ -1,15 +1,16 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import DashboardPage from "@/components/flashcard-sets-list/DashboardPage";
+import FlashcardSetView from "@/components/flashcard-set/FlashcardSetView";
 
 export const prerender = false;
+const { set_id: setId } = Astro.params;
+const safeSetId = typeof setId === "string" ? setId : "";
 ---
 
-<Layout title="Lista utworzonych zestawów fiszek">
+<Layout title="Zestaw fiszek">
   <main class="min-h-screen bg-gray-50 p-8">
     <div class="mx-auto max-w-8xl space-y-10 rounded-2xl bg-white p-8 text-gray-900 border border-gray-200">
-      <h1 class="text-4xl font-bold mb-8">Lista utworzonych zestawów fiszek</h1>
-      <DashboardPage client:load />
+      <FlashcardSetView setId={safeSetId} client:load />
     </div>
   </main>
 </Layout>

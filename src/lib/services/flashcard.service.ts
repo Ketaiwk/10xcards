@@ -11,6 +11,27 @@ import type {
  * Service for managing flashcards within flashcard sets
  */
 export class FlashcardService {
+  /**
+   * Usuwa (dezaktywuje) fiszkę w zestawie (ustawia is_deleted: true)
+   * @param userId - ID użytkownika
+   * @param setId - ID zestawu
+   * @param flashcardId - ID fiszki
+   */
+  async delete(userId: string, setId: string, flashcardId: string): Promise<void> {
+    // Sprawdź własność zestawu
+    await this.verifySetOwnership(userId, setId);
+
+    // Ustaw is_deleted: true dla fiszki
+    const { error } = await this.supabase
+      .from("flashcards")
+      .update({ is_deleted: true })
+      .eq("id", flashcardId)
+      .eq("set_id", setId);
+
+    if (error) {
+      throw new Error(`Failed to delete flashcard: ${error.message}`);
+    }
+  }
   constructor(private readonly supabase: SupabaseClient) {}
 
   /**
@@ -121,6 +142,10 @@ export class FlashcardService {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updateData: any = {};
 
+    // LOG: wejściowe dane do aktualizacji
+    // eslint-disable-next-line no-console
+    console.log("[FlashcardService.update] payload:", command);
+
     if (command.question !== undefined) {
       updateData.question = command.question;
     }
@@ -130,6 +155,13 @@ export class FlashcardService {
     if (command.is_deleted !== undefined) {
       updateData.is_deleted = command.is_deleted;
     }
+    if (command.creation_type !== undefined) {
+      updateData.creation_type = command.creation_type;
+    }
+
+    // LOG: dane do update
+    // eslint-disable-next-line no-console
+    console.log("[FlashcardService.update] updateData:", updateData);
 
     const { data, error } = await this.supabase
       .from("flashcards")
@@ -138,6 +170,10 @@ export class FlashcardService {
       .eq("set_id", setId)
       .select()
       .single();
+
+    // LOG: wynik update
+    // eslint-disable-next-line no-console
+    console.log("[FlashcardService.update] result:", { data, error });
 
     if (error) {
       if (error.code === "PGRST116") {

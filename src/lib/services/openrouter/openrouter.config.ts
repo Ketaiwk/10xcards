@@ -1,8 +1,6 @@
 import type { OpenRouterConfig } from "./openrouter.types";
 import { openRouterConfigSchema } from "./openrouter.schema";
 
-console.log("API Key available:", !!import.meta.env.VITE_OPENROUTER_API_KEY);
-
 // Sprawdź czy klucz API jest dostępny
 const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
 if (!apiKey) {

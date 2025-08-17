@@ -13,6 +13,7 @@ const DashboardPage: React.FC = () => {
         <h1 className="text-2xl font-bold">Moje zestawy fiszek</h1>
         <CreateSetButton onCreate={refetch} />
       </header>
+
       {loading && <div className="text-center py-8">Ładowanie...</div>}
       {error && (
         <div className="text-center py-8 text-red-500">

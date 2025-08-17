@@ -5,7 +5,7 @@ import type { FlashcardResponse, UpdateFlashcardCommand } from "@/types";
 import { OpenRouterService } from "@/lib/services/openrouter/openrouter.service";
 import { SourceTextForm } from "./SourceTextForm";
 import { ProgressIndicator } from "./ProgressIndicator";
-import { FlashcardList } from "./FlashcardList";
+import FlashcardList from "./FlashcardList";
 import { SetDetailsForm } from "./SetDetailsForm";
 import { ActionButtons } from "./ActionButtons";
 
@@ -31,16 +31,13 @@ interface FlashcardSetCreationState {
 
 const getAuthToken = () => {
   const token = localStorage.getItem("supabase.auth.token");
-  if (!token) {
-    console.warn("No auth token available!");
-  }
+  // Można dodać obsługę powiadomienia lub logowania błędu, jeśli token nie istnieje
   return token;
 };
 
 const getAuthHeader = () => {
   const token = getAuthToken();
   const header = token ? `Bearer ${token}` : "";
-  console.log("Auth header:", header);
   return header;
 };
 
@@ -303,7 +300,9 @@ const FlashcardSetCreationView = () => {
           onGenerate={generateFlashcards}
           isGenerating={state.isGenerating}
           value={state.sourceText}
-          onChange={(text) => updateState((prev) => ({ ...prev, sourceText: text }))}
+          onChange={(text) => {
+            updateState((prev) => ({ ...prev, sourceText: text }));
+          }}
         />
       </div>
 
@@ -327,9 +326,23 @@ const FlashcardSetCreationView = () => {
           </div>
 
           <FlashcardList
-            flashcards={state.flashcards}
+            items={state.flashcards}
             onEdit={editFlashcard}
             onDelete={deleteFlashcard}
+            onAccept={(id: string) => {
+              // Akceptacja fiszki AI: zmiana creation_type na 'ai_edited'
+              const flashcard = state.flashcards.find((f: FlashcardViewModel) => f.id === id);
+              if (!flashcard) return;
+              const updated: FlashcardViewModel = {
+                ...flashcard,
+                creation_type: "ai_edited",
+                isEditing: false,
+              };
+              updateState((prev: FlashcardSetCreationState) => ({
+                ...prev,
+                flashcards: prev.flashcards.map((f: FlashcardViewModel) => (f.id === id ? updated : f)),
+              }));
+            }}
             onEditStateChange={setFlashcardEditingState}
           />
         </div>

@@ -99,7 +99,6 @@ export function SourceTextForm({ onGenerate, isGenerating, value = "", onChange 
           value={value}
           onChange={(e) => {
             onChange?.(e.target.value);
-            // Informuj o długości tekstu tylko gdy przekroczy 1000 znaków
             if (e.target.value.length >= 1000 && value.length < 1000) {
               const statusElement = document.createElement("div");
               statusElement.setAttribute("role", "status");

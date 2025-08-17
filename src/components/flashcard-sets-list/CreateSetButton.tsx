@@ -14,7 +14,7 @@ const CreateSetButton: React.FC<Props> = () => {
       onClick={() => navigate("/sets/new")}
       aria-label="Utwórz nowy zestaw fiszek"
     >
-      {/* PRZENIESIONY: flashcard-sets-list/CreateSetButton.tsx */}
+      Nowy zestaw
     </button>
   );
 };
